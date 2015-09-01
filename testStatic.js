@@ -1,7 +1,7 @@
 //var a;
 //var b;
 //a = 42;
-//b = a + input;
+//b = a ;
 //a = a - b;
 
 var state = require('./state.js');
@@ -33,39 +33,32 @@ var states = [s1, s2, s3, s4, s5];
 
 
 s1.f = function() {
-    console.log("f applied to " + this.id);
-    var changed = false;
-    return s1.join('a', '?');
+	console.log('f applied to '+this.id);
+	return state.variableDeclaration.apply(this,['a']);
 };
 
 s2.f = function() {
-    console.log("f applied to " + this.id);
-    var changed = false;
-    return s2.join('b', '?');
+	console.log('f applied to '+this.id);
+    return state.variableDeclaration.apply(this,['b']);
 };
 
 s3.f = function() {
-    console.log("f applied to " + this.id);
-    return s3.join('a', '+');
+    console.log('f applied to ' + this.id);
+    return state.variableAffectationLiteral.apply(this,['a','42']);
 };
 
 s4.f = function() {
-    console.log("f applied to " + this.id);
-    return s4.join('b', '?');
+    console.log('f applied to ' + this.id);
+    return state.variableAffectationIdentifier.apply(this,['b','a']);
 };
 
 s5.f = function() {
-    console.log("f applied to " + this.id);
-    var oa = s3.map['a'];
-    var ob = s3.map['b'];
-
-    if ((oa.indexOf('?') != -1) || (ob.indexOf('?') != -1)) na = '?';
-    if ((oa.indexOf('+') != -1) && (ob.indexOf('-') != -1)) na = '+';
-    if ((oa.indexOf('-') != -1) && (ob.indexOf('+') != -1)) na = '-';
-    if ((oa.indexOf('+') != -1) && (ob.indexOf('+') != -1)) na = '?';
-    if ((oa.indexOf('-') != -1) && (ob.indexOf('-') != -1)) na = '?';
-    if ((oa.indexOf('B') != -1) || (ob.indexOf('B') != -1)) na = 'B';
-    return s5.join('a', na);
+	var exp = {};
+	exp.l = 'a';
+	exp.r = 'b';
+	exp.op = '-';
+	console.log('f applied to ' + this.id);
+    return state.variableAffectationExpression.apply(this,['a',exp]);
 };
 
 console.log('Fixed point');

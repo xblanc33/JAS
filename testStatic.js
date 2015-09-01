@@ -27,18 +27,20 @@ s3.parents.push(s2);
 s4.parents.push(s3);
 s5.parents.push(s4);
 
+var states = [s1, s2, s3, s4, s5];
+
 
 
 
 s1.f = function() {
     console.log("f applied to " + this.id);
-    var changed = false;    
+    var changed = false;
     return s1.join('a', '?');
 };
 
 s2.f = function() {
     console.log("f applied to " + this.id);
-    var changed = false;    
+    var changed = false;
     return s2.join('b', '?');
 };
 
@@ -63,21 +65,21 @@ s5.f = function() {
     if ((oa.indexOf('+') != -1) && (ob.indexOf('+') != -1)) na = '?';
     if ((oa.indexOf('-') != -1) && (ob.indexOf('-') != -1)) na = '?';
     if ((oa.indexOf('B') != -1) || (ob.indexOf('B') != -1)) na = 'B';
-    return s5.join('a',na);
+    return s5.join('a', na);
 };
 
-console.log('FIRST');
-console.log(s1.applyF());
-console.log(s2.applyF());
-console.log(s3.applyF());
-console.log(s4.applyF());
-console.log(s5.applyF());
-
-
-console.log('SECOND');
-console.log(s1.applyF());
-console.log(s2.applyF());
-console.log(s3.applyF());
-console.log(s4.applyF());
-console.log(s5.applyF());
-
+console.log('Fixed point');
+var fixed = false;
+var start = 0;
+var next_start = 0;
+while (!fixed) {
+	fixed=true;
+    for (var i = 0; i < states.length; i++) {
+    	var j = (i + start) % states.length;
+        if (states[j].applyF()) {
+        	next_start = i;
+        	fixed = false;
+        };
+    };
+    start = next_start+1;
+}

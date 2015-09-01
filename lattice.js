@@ -229,6 +229,7 @@ function Lattice(s_elements) {
     };
 };
 
+
 function powerLattice(l1, l2) {
     var s_elements = [];
     els_l1 = l1.getElements();

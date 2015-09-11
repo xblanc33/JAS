@@ -11,10 +11,16 @@ var ast = esprima.parse(data, {
     loc: true
 });
 
-var abst = {};
 console.log(ast);
+
+var abst = {};
+var tmp_var_id=0;
+
 visitNode(ast, abst);
 console.log(abst);
+console.log(tmp_var_id);
+
+
 
 function visitNode(node, abst) {
     console.log('node type:' + node.type);
@@ -28,6 +34,11 @@ function visitNode(node, abst) {
         case 'ExpressionStatement':
             visitExpressionStatement(node, abst);
             break;
+        case 'IfStatement':
+            visitIfStatement(node, abst);
+            break;
+        case 'WhileStatement':
+            visitWhileStatement(node, abst);
         default:
             break;
     };
@@ -37,7 +48,6 @@ function visitNode(node, abst) {
 function visitProgram(node, abst) {
     console.log('Program');
     abst.instructions = [];
-    abst.tv = 0; //temporal variable __v_i
     for (var i = 0; i < node.body.length; i++) {
         visitNode(node.body[i], abst);
     };
@@ -69,8 +79,8 @@ function visitVariableInit(node, abst) {
             var read = {};
             read.type = 'read-variable';
             read.x = node.init.name;
-            read.v = '__v_' + abst.tv;
-            abst.tv++;
+            read.v = '__v_' + tmp_var_id;
+            tmp_var_id++;
             abst.instructions.push(read);
             write.v = read.v;
             break;
@@ -104,8 +114,8 @@ function visitBinaryExpression(node, abst) {
             var read = {};
             read.type = 'read-variable';
             read.x = node.left.name;
-            read.v = '__v_' + abst.tv;
-            abst.tv++;
+            read.v = '__v_' + tmp_var_id;
+            tmp_var_id++;
             abst.instructions.push(read);
             op.x = read.v;
             break;
@@ -129,8 +139,8 @@ function visitBinaryExpression(node, abst) {
             var read = {};
             read.type = 'read-variable';
             read.x = node.right.name;
-            read.v = '__v_' + abst.tv;
-            abst.tv++;
+            read.v = '__v_' + tmp_var_id;
+            tmp_var_id++;
             abst.instructions.push(read);
             op.y = read.v;
             break;
@@ -144,11 +154,10 @@ function visitBinaryExpression(node, abst) {
             break;
         default:
             break;
-
     };
 
-    op.r = '__v_' + abst.tv;
-    abst.tv++;
+    op.r = '__v_' + tmp_var_id;
+    tmp_var_id++;
     abst.instructions.push(op);
 };
 
@@ -166,8 +175,8 @@ function visitUnaryExpression(node, abst) {
             var read = {};
             read.type = 'read-variable';
             read.x = node.argument.name;
-            read.v = '__v_' + abst.tv;
-            abst.tv++;
+            read.v = '__v_' + tmp_var_id;
+            tmp_var_id++;
             abst.instructions.push(read);
             op.x = read.v;
             break;
@@ -186,8 +195,8 @@ function visitUnaryExpression(node, abst) {
 
 
 
-    op.r = '__v_' + abst.tv;
-    abst.tv++;
+    op.r = '__v_' + tmp_var_id;
+    tmp_var_id++;
     abst.instructions.push(op);
 };
 
@@ -208,8 +217,8 @@ function visitExpressionStatement(node, abst) {
                     var read = {};
                     read.type = 'read-variable';
                     read.x = node.expression.right.name;
-                    read.v = '__v_' + abst.tv;
-                    abst.tv++;
+                    read.v = '__v_' + tmp_var_id;
+                    tmp_var_id++;
                     abst.instructions.push(read);
                     write.v = read.v;
                     break;
@@ -230,5 +239,60 @@ function visitExpressionStatement(node, abst) {
         default:
             break;
     };
+};
+
+
+function visitIfStatement(node, abst) {
+    console.log('IfStatement');
+    var ifi = {};
+    ifi.type = 'if';
+
+
+    //consequent
+    ifi.consequent = {};
+    ifi.consequent.instructions = [];
+    switch (node.consequent.type) {
+        case 'ExpressionStatement':
+            visitExpressionStatement(node.consequent, ifi.consequent);
+            break;
+        case 'BlockStatement':
+            for (var i = 0; i < node.consequent.body.length; i++) {
+                visitNode(node.consequent.body[i], ifi.consequent);
+            };
+            break;
+    };
+
+    //alternate
+    if (node.alternate) {
+        ifi.alternate = {};
+        ifi.alternate.instructions = [];
+        switch (node.alternate.type) {
+            case 'ExpressionStatement':
+                visitExpressionStatement(node.alternate, ifi.alternate);
+                break;
+            case 'BlockStatement':
+                for (var i = 0; i < node.alternate.body.length; i++) {
+                    visitNode(node.alternate.body[i], ifi.alternate);
+                };
+                break;
+        };
+    };
+
+    abst.instructions.push(ifi);
+
+};
+
+
+function visitWhileStatement(node, abst) {
+    var we = {};
+    we.type = 'when';
+    we.body = {};
+    we.body.instructions = [];
+    if (node.body.type === 'BlockStatement') {
+        for (var i = 0; i < node.body.body.length; i++) {
+            visitNode(node.body.body[i], we.body);
+        };
+    } else visitNode(node.body, we.body);
+    abst.instructions.push(we);
 
 };

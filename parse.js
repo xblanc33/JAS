@@ -25,7 +25,15 @@ l.enforceAll();
 console.log(l.elements);
 
 var states = [];
-var lastState;
+var last_state;
+
+var bloc_states = [];
+
+var if_states = [];
+var then_states= [];
+var is_if;
+var is_then;
+var is_else;
 //traverse
 estraverse.traverse(ast, {
     enter: function(node, parent) {
@@ -33,6 +41,27 @@ estraverse.traverse(ast, {
             case 'Program':
                 console.log('start program analysis');
                 break;
+            case 'IfStatement':
+                console.log('start a if');
+                var ns = new state.State(states.length, l);
+                ns.f = function() {
+                    return state.IfStatement.apply(this, []);
+
+                };
+                ns.parents.push(last_state);
+                last_state = ns;
+                states.push(ns);
+                
+                //if
+                if_states.push(ns);
+                is_if = true;
+                is_then=true;
+                is_else=false;
+                //eif
+                
+                break;
+
+
 
         }
     },
@@ -42,18 +71,31 @@ estraverse.traverse(ast, {
                 console.log('end program analysis');
                 fixedPoint();
                 break;
+            case 'IfStatement':
+                console.log('close a if');
+                bloc_closed = true;
+                break;
             case 'VariableDeclarator':
-                variableDeclaration(node);
+                console.log('Variable !!!');
+                console.log(this);
+                variableDeclaration(node, parent);
                 break;
             case 'ExpressionStatement':
-                expressionStatement(node);
+                expressionStatement(node, parent);
                 break;
+
         }
 
     }
 });
 
-function expressionStatement(node) {
+
+
+function connect2Parents(ns, node, parent) {
+    
+};
+
+function expressionStatement(node, parent) {
     if (node.expression.operator === '=') { //otherwize, I don't know how it works
         if (node.expression.left.type === 'Identifier') { //otherwize, I don't know how it works
             var v = node.expression.left.name;
@@ -61,29 +103,27 @@ function expressionStatement(node) {
                 case 'Literal':
                     var lit = node.expression.right.value;
                     var ns = new state.State(states.length, l);
-                    if (lastState) ns.parents.push(lastState);
-                    lastState = ns;
                     ns.f = function() {
                         console.log('f applied to ' + this.id);
                         return state.variableAffectationLiteral.apply(this, [v, lit]);
                     };
                     states.push(ns);
+                    connect2Parents(ns, node, parent);
+                    last_state = ns;
                     break;
                 case 'Identifier':
                     var id = node.expression.right.name;
                     var ns = new state.State(states.length, l);
-                    if (lastState) ns.parents.push(lastState);
-                    lastState = ns;
                     ns.f = function() {
                         console.log('f applied to ' + this.id);
                         return state.variableAffectationIdentifier.apply(this, [v, id]);
                     };
                     states.push(ns);
+                    connect2Parents(ns, node, parent);
+                    last_state = ns;
                     break;
                 case 'BinaryExpression':
                     var ns = new state.State(states.length, l);
-                    if (lastState) ns.parents.push(lastState);
-                    lastState = ns;
                     ns.f = function() {
                         var exp = {};
                         exp.l = node.expression.right.left.name;
@@ -93,17 +133,20 @@ function expressionStatement(node) {
                         return state.variableAffectationExpression.apply(this, ['a', exp]);
                     };
                     states.push(ns);
+                    last_state = ns;                    
+                    connect2Parents(ns, node, parent);
                     break;
+
             };
         };
     };
 };
 
-function variableDeclaration(node) {
+function variableDeclaration(node, parent) {
 
     var ns = new state.State(states.length, l);
-    if (lastState) ns.parents.push(lastState);
-    lastState = ns;
+    if (last_state) ns.parents.push(last_state);
+    last_state = ns;
 
     ns.f = function() {
         console.log('f applied to ' + this.id);

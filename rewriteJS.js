@@ -14,7 +14,7 @@ var ast = esprima.parse(data, {
 console.log(ast);
 
 var abst = {};
-var tmp_var_id=0;
+var tmp_var_id = 0;
 
 visitNode(ast, abst);
 console.log(abst);
@@ -39,6 +39,10 @@ function visitNode(node, abst) {
             break;
         case 'WhileStatement':
             visitWhileStatement(node, abst);
+            break;
+        case 'ForStatement':
+            visitForStatement(node, abst);
+            break;
         default:
             break;
     };
@@ -285,7 +289,7 @@ function visitIfStatement(node, abst) {
 
 function visitWhileStatement(node, abst) {
     var we = {};
-    we.type = 'when';
+    we.type = 'while';
     we.body = {};
     we.body.instructions = [];
     if (node.body.type === 'BlockStatement') {
@@ -296,3 +300,18 @@ function visitWhileStatement(node, abst) {
     abst.instructions.push(we);
 
 };
+
+
+function visitForStatement(node, abst) {
+    var fo = {};
+    fo.type = 'for';
+    fo.body = {};
+    fo.body.instructions = [];
+    if (node.body.type === 'BlockStatement') {
+        for (var i = 0; i < node.body.body.length; i++) {
+            visitNode(node.body.body[i], fo.body);
+        };
+    } else visitNode(node.body, fo.body);
+    abst.instructions.push(fo);
+
+}

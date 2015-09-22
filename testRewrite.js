@@ -2,7 +2,7 @@ var rJS = require('./rewriteJS.js');
 
 var abst = rJS.rewriteJS('simpleCode.js')
 
-//console.log(abst);
+console.log(abst);
 
 
 var sg = require('./statesGenerator.js');

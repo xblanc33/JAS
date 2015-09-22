@@ -8,7 +8,7 @@ l.enforceAll();
 
 //x is the declared variable
 function variableDeclaration(inst) {
-    return this.join(inst.x, '?');
+    return this.join(inst.x, 'B');
 };
 
 
@@ -21,7 +21,7 @@ function readVariable(inst) {
 function writeVariable(inst) {
     if (inst.jstype == 'Literal') {
         var val = signOfLiteral(inst.v);
-        return this.join(inst.x, inst.val);
+        return this.join(inst.x, val);
     } else { //'Identifier'
         var v_id = this.getParentValue(inst.v);
         return this.join(inst.x, v_id);
@@ -44,10 +44,10 @@ function operation(op) {
     if (op.arity == 'unary') {
         if (op.xjstype == 'Literal') {
             var val = signOfLiteral(op.x);
-            return this.join(v, val);
+            return this.join(op.r, elementUnaryExpression(val, op.operator));
         } else { //'Identifier'
             var v_id = this.getParentValue(op.x);
-            return this.join(v, v_id);
+            return this.join(op.r, v_id);
         }
     } else { //'binary'
         var l, r;
@@ -57,12 +57,21 @@ function operation(op) {
         if (op.yjstype == 'Literal') {
             r = signOfLiteral(op.y);
         } else r = this.getParentValue(op.y);
-        return this.join(op.r, elementExpression(l, r, op.operator));
+        return this.join(op.r, elementBinaryExpression(l, r, op.operator));
     };
 };
 
+function elementUnaryExpression(v, op) {
+	//console.log('unary'+v+op);
+	if (v=== '+' && op === '+') return '+';
+    if (v === '-' && op === '-') return '+';
+    if (v === '-' && op === '+') return '-';
+    if (v === '+' && op === '-') return '-';
+    else return '?';
+}
 
-function elementExpression(l, r, op) {
+
+function elementBinaryExpression(l, r, op) {
     switch (op) {
         case ('+'):
             return signPlus(l, r);
@@ -91,9 +100,19 @@ function signMinus(l, r) {
 };
 
 function signPower(l, r) {
-    return '?';
+    if (l === '+' && r === '+') return '+';
+    if (l === '-' && r === '-') return '-';
+    else return '?';
 };
 
+
+function ifstart(inst) {
+	return this.join();
+};
+
+function ifend(inst) {
+	return this.join();
+};
 
 
 module.exports.l = l;
@@ -101,3 +120,5 @@ module.exports.variableDeclaration = variableDeclaration;
 module.exports.readVariable = readVariable;
 module.exports.writeVariable = writeVariable;
 module.exports.operation = operation;
+module.exports.ifstart = ifstart;
+module.exports.ifend = ifend;

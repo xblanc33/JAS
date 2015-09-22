@@ -196,7 +196,7 @@ function visitUnaryExpression(node, abst) {
     op.operator = node.operator;
 
 
-    switch (node.argument) {
+    switch (node.argument.type) {
         case 'Literal':
             op.x = node.argument.value;
             op.xjstype = 'Literal';

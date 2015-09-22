@@ -33,12 +33,12 @@ function State(i, l) {
         //join all properties but k
         var changed = false;
         for (pk in parents_map) {
-            if ((k) && (pk !== k)) {
+            if (!k || (pk !== k)) {
                 if (this.map[pk]) parents_map[pk].push(this.map[pk]); //include the state mapping 
                 var pv = this.lattice.getLeastUpper(parents_map[pk])[0];
                 if (!this.map[pk] || (pv != this.map[pk])) {
                     this.map[pk] = pv;
-                    console.log('now ' + pk + ' is ' + pv);
+                    console.log('in state '+this.id+' now ' + pk + ' is ' + pv);
                     changed = true;
                 };
             };
@@ -46,7 +46,7 @@ function State(i, l) {
 
         if (k && v && (v != this.map[k])) {
             this.map[k] = v;
-            console.log('now ' + k + ' is ' + v);
+            console.log('in state '+this.id+' now ' + k + ' is ' + v);
             changed = true;
 
         };
@@ -73,7 +73,3 @@ function State(i, l) {
     };
 
 };
-
-
-
-

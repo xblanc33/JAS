@@ -114,6 +114,10 @@ function ifend(inst) {
 	return this.join();
 };
 
+function whilebody(inst) {
+	return this.join();
+};
+
 
 module.exports.l = l;
 module.exports.variableDeclaration = variableDeclaration;
@@ -122,3 +126,4 @@ module.exports.writeVariable = writeVariable;
 module.exports.operation = operation;
 module.exports.ifstart = ifstart;
 module.exports.ifend = ifend;
+module.exports.whilebody = whilebody;

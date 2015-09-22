@@ -134,4 +134,31 @@ function generateIf(inst, states, last_state) {
 };
 
 
+function generateWhile(inst, states, last_state) {
+    //if start
+    var s_while = new state.State('while'+state_id, sil.l);
+    s_while.f = function() {
+        sil.whilebody.apply(this, [inst]);
+    };
+    state_id++;
+    if (last_state) s_while.parents.push(last_state);
+    states.push(s_while);
+
+    //body
+    if (inst.body) {
+        var body_states = generateStates(inst.body);
+        for (var i = 0; i < body_states.length; i++) {
+            states.push(body_states[i])
+        };
+        if (body_states && body_states.length > 0) {
+        	body_states[0].parents.push(s_while);
+            s_while.parents.push(body_states[body_states.length - 1]);
+        };
+    };
+
+    return s_while;
+
+};
+
+
 module.exports.generateStates = generateStates;

@@ -38,7 +38,7 @@ function State(i, l) {
                 var pv = this.lattice.getLeastUpper(parents_map[pk])[0];
                 if (!this.map[pk] || (pv != this.map[pk])) {
                     this.map[pk] = pv;
-                    console.log('in state '+this.id+' now ' + pk + ' is ' + pv);
+                    //console.log('in state '+this.id+' now ' + pk + ' is ' + pv);
                     changed = true;
                 };
             };
@@ -46,12 +46,12 @@ function State(i, l) {
 
         if (k && v && (v != this.map[k])) {
             this.map[k] = v;
-            console.log('in state '+this.id+' now ' + k + ' is ' + v);
+            //console.log('in state '+this.id+' now ' + k + ' is ' + v);
             changed = true;
 
         };
 
-        if (!changed) console.log('no change');
+        //if (!changed) console.log('no change');
 
         return changed;
 

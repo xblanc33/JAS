@@ -7,7 +7,8 @@ var fileName = process.argv[2];
 var abst = {};
 var tmp_var_id = 0;
 
-
+//main function
+//parse a JS file and returns an abstraction (not a complete CFG)
 module.exports.rewriteJS = rewriteJS;
 
 

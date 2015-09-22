@@ -6,27 +6,30 @@ l.lift('B');
 l.down('?');
 l.enforceAll();
 
-
-function variableDeclaration(x) {
-    return this.join(x, '?');
+//x is the declared variable
+function variableDeclaration(inst) {
+    return this.join(inst.x, '?');
 };
 
 
-function readVariable(x, v) {
-    return (this.join(v, this.getParentValue(x)));
+//x is the readen variable. v is the new created variable that contains the value of x
+function readVariable(inst) {
+    return (this.join(inst.v, this.getParentValue(inst.x)));
 };
 
-function writeVariable(x, v, jstype) {
-    if (jstype == 'Literal') {
-        var val = signOfLiteral(v);
-        return this.join(x, val);
+//x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
+function writeVariable(inst) {
+    if (inst.jstype == 'Literal') {
+        var val = signOfLiteral(inst.v);
+        return this.join(inst.x, inst.val);
     } else { //'Identifier'
-        var v_id = this.getParentValue(v);
-        return this.join(x, v_id);
+        var v_id = this.getParentValue(inst.v);
+        return this.join(inst.x, v_id);
     }
 };
 
 
+//returns the sign of a literal
 function signOfLiteral(lit) {
     var num = parseInt(lit);
     if (!isNaN(num)) {
@@ -36,6 +39,7 @@ function signOfLiteral(lit) {
     } else return 'B';
 }
 
+//returns the sign of a literal
 function operation(op) {
     if (op.arity == 'unary') {
         if (op.xjstype == 'Literal') {

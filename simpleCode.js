@@ -3,7 +3,7 @@ var b;
 a = 42;
 b = a;
 a = a + b;
-b = a - b;
+// b = a - b;
 // a = (a + b) -42;
 
 

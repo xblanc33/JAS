@@ -1,4 +1,3 @@
-var lat = require('./lattice.js');
 var state = require('./state.js');
 var sil = require('./simpleIntegerLattice.js');
 
@@ -49,7 +48,7 @@ function generateDeclareVariable(inst) {
     var ns = new state.State(state_id, sil.l);
     state_id++;
     ns.f = function() {
-        return sil.variableDeclaration.apply(this, [inst.x]);
+        return sil.variableDeclaration.apply(this, [inst]);
     };
     return ns;
 };
@@ -59,7 +58,7 @@ function generateReadVariable(inst) {
     var ns = new state.State(state_id, sil.l);
     state_id++;
     ns.f = function() {
-        sil.readVariable.apply(this, [inst.x, inst.v]);
+        sil.readVariable.apply(this, [inst]);
     };
     return ns;
 };
@@ -68,7 +67,7 @@ function generateWriteVariable(inst) {
     var ns = new state.State(state_id, sil.l);
     state_id++;
     ns.f = function() {
-        sil.writeVariable.apply(this, [inst.x, inst.v, inst.jstype]);
+        sil.writeVariable.apply(this, [inst]);
     };
     return ns;
 };

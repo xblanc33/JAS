@@ -4,26 +4,35 @@ var fs = require('fs');
 var fileName = process.argv[2];
 
 
-//Parse all.js
-var data = fs.readFileSync(fileName, 'utf-8');
-//console.log(data);
-var ast = esprima.parse(data, {
-    loc: true
-});
-
-console.log(ast);
-
 var abst = {};
 var tmp_var_id = 0;
 
-visitNode(ast, abst);
-console.log(abst);
-console.log(tmp_var_id);
+
+module.exports.rewriteJS = rewriteJS;
+
+
+function rewriteJS(fileName) {
+    //Parse all.js
+    var data = fs.readFileSync(fileName, 'utf-8');
+    //console.log(data);
+    var ast = esprima.parse(data, {
+        loc: true
+    });
+
+    //init variables
+    abst = {};
+    tmp_var_id = 0;
+
+
+    visitNode(ast, abst);
+
+    return abst;
+
+};
 
 
 
 function visitNode(node, abst) {
-    console.log('node type:' + node.type);
     switch (node.type) {
         case 'Program':
             visitProgram(node, abst);
@@ -43,6 +52,9 @@ function visitNode(node, abst) {
         case 'ForStatement':
             visitForStatement(node, abst);
             break;
+        case 'FunctionDeclaration':
+            visitFunctionDeclaration(node, abst);
+            break;
         default:
             break;
     };
@@ -50,7 +62,6 @@ function visitNode(node, abst) {
 };
 
 function visitProgram(node, abst) {
-    console.log('Program');
     abst.instructions = [];
     for (var i = 0; i < node.body.length; i++) {
         visitNode(node.body[i], abst);
@@ -58,7 +69,6 @@ function visitProgram(node, abst) {
 };
 
 function visitVariableDeclaration(node, abst) {
-    console.log('VariableDeclaration');
     for (var i = 0; i < node.declarations.length; i++) {
         var decl = {};
         decl.type = 'declare-variable';
@@ -78,6 +88,7 @@ function visitVariableInit(node, abst) {
     switch (node.init.type) {
         case 'Literal':
             write.v = node.init.value;
+            write.jstype = 'Literal';
             break;
         case 'Identifier':
             var read = {};
@@ -87,14 +98,17 @@ function visitVariableInit(node, abst) {
             tmp_var_id++;
             abst.instructions.push(read);
             write.v = read.v;
+            write.jstype = 'Identifier';
             break;
         case 'BinaryExpression':
             visitBinaryExpression(node.init, abst);
             write.v = abst.instructions[abst.instructions.length - 1].r;
+            write.jstype = 'Identifier';
             break;
         case 'UnaryExpression':
             visitUnaryExpression(node.init, abst);
             write.v = abst.instructions[abst.instructions.length - 1].r;
+            write.jstype = 'Identifier';
             break;
         default:
             break;
@@ -109,10 +123,12 @@ function visitBinaryExpression(node, abst) {
     var op = {};
     op.type = 'operation';
     op.operator = node.operator;
+    op.arity = 'binary';
 
     switch (node.left.type) {
         case 'Literal':
             op.x = node.left.value;
+            op.xjstype = 'Literal';
             break;
         case 'Identifier':
             var read = {};
@@ -122,14 +138,17 @@ function visitBinaryExpression(node, abst) {
             tmp_var_id++;
             abst.instructions.push(read);
             op.x = read.v;
+            op.xjstype = 'Identifier';
             break;
         case 'BinaryExpression':
             visitBinaryExpression(node.left, abst);
             op.x = abst.instructions[abst.instructions.length - 1].r;
+            op.xjstype = 'Identifier';
             break;
         case 'UnaryExpression':
             visitUnaryExpression(node.left, abst);
             op.x = abst.instructions[abst.instructions.length - 1].r;
+            op.xjstype = 'Identifier';
             break;
         default:
             break;
@@ -138,6 +157,7 @@ function visitBinaryExpression(node, abst) {
     switch (node.right.type) {
         case 'Literal':
             op.y = node.right.value;
+            op.yjstype = 'Literal';
             break;
         case 'Identifier':
             var read = {};
@@ -147,14 +167,17 @@ function visitBinaryExpression(node, abst) {
             tmp_var_id++;
             abst.instructions.push(read);
             op.y = read.v;
+            op.yjstype = 'Identifier';
             break;
         case 'BinaryExpression':
             visitBinaryExpression(node.right, abst);
             op.y = abst.instructions[abst.instructions.length - 1].r;
+            op.yjstype = 'Identifier';
             break;
         case 'UnaryExpression':
             visitUnaryExpression(node.right, abst);
             op.y = abst.instructions[abst.instructions.length - 1].r;
+            op.yjstype = 'Identifier';
             break;
         default:
             break;
@@ -168,12 +191,14 @@ function visitBinaryExpression(node, abst) {
 function visitUnaryExpression(node, abst) {
     var op = {};
     op.type = 'operation';
+    op.arity = 'unary';
     op.operator = node.operator;
 
 
     switch (node.argument) {
         case 'Literal':
             op.x = node.argument.value;
+            op.xjstype = 'Literal';
             break;
         case 'Identifier':
             var read = {};
@@ -183,14 +208,17 @@ function visitUnaryExpression(node, abst) {
             tmp_var_id++;
             abst.instructions.push(read);
             op.x = read.v;
+            op.xjstype = 'Identifier';
             break;
         case 'BinaryExpression':
             visitBinaryExpression(node.argument, abst);
             op.x = abst.instructions[abst.instructions.length - 1].r;
+            op.xjstype = 'Identifier';
             break;
         case 'UnaryExpression':
             visitUnaryExpression(node.argument, abst);
             op.x = abst.instructions[abst.instructions.length - 1].r;
+            op.xjstype = 'Identifier';
             break;
 
         default:
@@ -206,7 +234,6 @@ function visitUnaryExpression(node, abst) {
 
 
 function visitExpressionStatement(node, abst) {
-    console.log('ExpressionStatement');
     switch (node.expression.type) {
         case 'AssignmentExpression':
             var write = {};
@@ -216,6 +243,7 @@ function visitExpressionStatement(node, abst) {
             switch (node.expression.right.type) {
                 case 'Literal':
                     write.v = node.expression.right.value;
+                    write.jstype = 'Literal';
                     break;
                 case 'Identifier':
                     var read = {};
@@ -225,14 +253,17 @@ function visitExpressionStatement(node, abst) {
                     tmp_var_id++;
                     abst.instructions.push(read);
                     write.v = read.v;
+                    write.jstype = "Identifier";
                     break;
                 case 'BinaryExpression':
                     visitBinaryExpression(node.expression.right, abst);
                     write.v = abst.instructions[abst.instructions.length - 1].r;
+                    write.jstype = "Identifier";
                     break;
                 case 'UnaryExpression':
                     visitUnaryExpression(node.expression.right, abst);
                     write.v = abst.instructions[abst.instructions.length - 1].r;
+                    write.jstype = "Identifier";
                     break;
                 default:
                     break;
@@ -246,11 +277,37 @@ function visitExpressionStatement(node, abst) {
 };
 
 
+function visitTest(node, abst) {
+    switch (node.type) {
+        case 'Identifier':
+            var read = {};
+            read.type = 'read-variable';
+            read.x = node.name;
+            read.v = '__v_' + tmp_var_id;
+            tmp_var_id++;
+            abst.instructions.push(read);
+            break;
+        case 'BinaryExpression':
+            visitBinaryExpression(node, abst);
+            break;
+        case 'UnaryExpression':
+            visitUnaryExpression(node, abst);
+            break;
+        default:
+            break;
+
+    };
+};
+
+
 function visitIfStatement(node, abst) {
-    console.log('IfStatement');
     var ifi = {};
     ifi.type = 'if';
 
+    //test
+    ifi.test = {};
+    ifi.test.instructions = [];
+    visitTest(node.test, ifi.test);
 
     //consequent
     ifi.consequent = {};
@@ -290,6 +347,13 @@ function visitIfStatement(node, abst) {
 function visitWhileStatement(node, abst) {
     var we = {};
     we.type = 'while';
+
+    //test
+    we.test = {};
+    we.test.instructions = [];
+    visitTest(node.test, we.test);
+
+    //body
     we.body = {};
     we.body.instructions = [];
     if (node.body.type === 'BlockStatement') {
@@ -314,4 +378,17 @@ function visitForStatement(node, abst) {
     } else visitNode(node.body, fo.body);
     abst.instructions.push(fo);
 
-}
+};
+
+function visitFunctionDeclaration(node, abst) {
+    var fun = {};
+    fun.type = 'function';
+    fun.body = {};
+    fun.body.instructions = [];
+    if (node.body.type === 'BlockStatement') {
+        for (var i = 0; i < node.body.body.length; i++) {
+            visitNode(node.body.body[i], fun.body);
+        };
+    } else visitNode(node.body, fun.body);
+    abst.instructions.push(fun);
+};

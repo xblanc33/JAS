@@ -1,5 +1,7 @@
 set = require('./set.js')
 
+module.exports.Lattice = Lattice;
+
 //create a lattice
 //s_elements contains all the elements of the lattice 
 //set the order between the elements with addOrder()
@@ -26,6 +28,18 @@ function Lattice(s_elements) {
         };
     };
 
+    //return the bottom element
+    this.getBottom = function() {
+        return this.elements[0];
+    };
+
+
+    //return the bottom element
+    this.getTop = function() {
+        return this.elements[this.elements.length-1];
+    };
+
+    //return all the elements of the lattice
     this.getElements = function() {
         var els = [];
         for (var i = 0; i < this.elements.length; i++) {
@@ -34,10 +48,12 @@ function Lattice(s_elements) {
         return els;
     };
 
+    //return the number of elements contained in the lattice
     this.getSize = function() {
         return this.size;
     };
 
+    //set a new order in the lattice between the x and y element (x < y)
     this.addOrder = function(x, y) {
         var x_i = this.elements.indexOf(x);
         var y_i = this.elements.indexOf(y);
@@ -47,7 +63,7 @@ function Lattice(s_elements) {
     };
 
 
-    //enforce reflexivity
+    //set the matrix and enforce reflexivity
     this.enforceReflexivity = function() {
         for (var i = 0; i < this.size; i++) {
             for (var j = 0; j < this.size; j++) {
@@ -58,8 +74,8 @@ function Lattice(s_elements) {
         };
     };
 
-
-    this.enforceSymmerty = function() {
+    //set the matrix and enforce symmetry
+    this.enforceSymmetry = function() {
         //enforce symmetry
         for (var i = 0; i < this.size; i++) {
             for (var j = 0; j < this.size ; j++) {
@@ -69,6 +85,7 @@ function Lattice(s_elements) {
     };
 
 
+    //set the matrix and enforce transitivity
     this.enforceTransitivity = function() {
         //enforce transitivity
         var changed = true;
@@ -90,12 +107,14 @@ function Lattice(s_elements) {
     };
 
 
+    //set the matrix and enforce all
     this.enforceAll = function() {
         this.enforceReflexivity();
-        this.enforceSymmerty();
+        this.enforceSymmetry();
         this.enforceTransitivity();
     };
 
+    //add a new bottom element (b)
     this.lift = function(b) {
         var tmp_elements = [];
         tmp_elements.push(b);
@@ -122,6 +141,7 @@ function Lattice(s_elements) {
         this.orders = tmp_orders;
     };
 
+    //add a new top element (t)
     this.down = function(t) {
         var tmp_elements = [];
         for (var i = 0; i < this.elements.length; i++) {
@@ -149,20 +169,25 @@ function Lattice(s_elements) {
         this.orders = tmp_orders;
     };
 
+    //obtain the order between x and y
     this.getOrder = function(x, y) {
         return this.orders[this.elements.indexOf(x)][this.elements.indexOf(y)];
     };
 
+
+    //return true iff x <= y
     this.isLower = function(x, y) {
         if (this.getOrder(x, y) === -1) return true
         else return false;
     };
 
+    //return true iff x > y
     this.isUpper = function(x, y) {
         if (this.getOrder(x, y) === 1) return true
         else return false;
     };
 
+    //return all elements that are upper of x
     this.getElementAllUppers = function(x) {
         var allUppers = [];
         var x_index = this.elements.indexOf(x);
@@ -172,6 +197,7 @@ function Lattice(s_elements) {
         return allUppers;
     };
 
+    //return all elements that are upper of all elements in s
     this.getElementsAllUppers = function(s) {
         var allUppers = this.elements;
         for (var i = 0; i < s.length; i++) {
@@ -180,6 +206,7 @@ function Lattice(s_elements) {
         return allUppers;
     };
 
+    //get the least upper element of s (a set of elements)
     this.getLeastUpper = function(s) {
         var allUppers = this.getElementsAllUppers(s);
         var least = [];
@@ -196,6 +223,7 @@ function Lattice(s_elements) {
     };
 
 
+    //get the lowers elements of x
     this.getElementAllLowers = function(x) {
         var allLowers = [];
         var x_index = this.elements.indexOf(x);
@@ -205,6 +233,7 @@ function Lattice(s_elements) {
         return allLowers;
     };
 
+    //get the lowers elements of a set of elements (s)
     this.getElementsAllLowers = function(s) {
         var allLowers = this.elements;
         for (var i = 0; i < s.length; i++) {
@@ -213,6 +242,7 @@ function Lattice(s_elements) {
         return allLowers;
     };
 
+    //get the greatest lower element of a set of elements (s)
     this.getGreatestLower = function(s) {
         var allLowers = this.getElementsAllLowers(s);
         var greatest = [];
@@ -230,44 +260,44 @@ function Lattice(s_elements) {
 };
 
 
-function powerLattice(l1, l2) {
-    var s_elements = [];
-    els_l1 = l1.getElements();
-    els_l2 = l2.getElements();
+// function powerLattice(l1, l2) {
+//     var s_elements = [];
+//     els_l1 = l1.getElements();
+//     els_l2 = l2.getElements();
 
-    for (var i = 0; i < els_l1.length; i++) {
-        for (var j = 0; j < els_l2.length; j++) {
-            var es = els_l1[i] + els_l2[j];
-            s_elements.push(es);
-        };
-    };
+//     for (var i = 0; i < els_l1.length; i++) {
+//         for (var j = 0; j < els_l2.length; j++) {
+//             var es = els_l1[i] + els_l2[j];
+//             s_elements.push(es);
+//         };
+//     };
 
-    var la = new Lattice(s_elements);
+//     var la = new Lattice(s_elements);
 
-    console.log(la.getElements());
-    console.log(la.getSize());
+//     console.log(la.getElements());
+//     console.log(la.getSize());
 
-    for (var i = 0; i < els_l1.length; i++) {
-        for (var j = 0; j < els_l2.length; j++) {
-            var ei = els_l1[i] + els_l2[j];
-            for (var k = 0; k < els_l1.length; k++) {
-                for (var l = 0; l < els_l2.length; l++) {
-                    var ej = els_l1[k] + els_l2[l];
-                    var l1Bool = l1.isLower(els_l1[i], els_l1[k]);
-                    var l2Bool = l2.isLower(els_l2[j], els_l2[l]);
-                    if (l1Bool && l2Bool) {
-                        la.addOrder(ei, ej);
-                    };
-                };
-            };
-        };
-    };
+//     for (var i = 0; i < els_l1.length; i++) {
+//         for (var j = 0; j < els_l2.length; j++) {
+//             var ei = els_l1[i] + els_l2[j];
+//             for (var k = 0; k < els_l1.length; k++) {
+//                 for (var l = 0; l < els_l2.length; l++) {
+//                     var ej = els_l1[k] + els_l2[l];
+//                     var l1Bool = l1.isLower(els_l1[i], els_l1[k]);
+//                     var l2Bool = l2.isLower(els_l2[j], els_l2[l]);
+//                     if (l1Bool && l2Bool) {
+//                         la.addOrder(ei, ej);
+//                     };
+//                 };
+//             };
+//         };
+//     };
 
-    la.enforceAll();
+//     la.enforceAll();
 
-    return la;
+//     return la;
 
-};
+// };
 
-module.exports.Lattice = Lattice;
-module.exports.powerLattice = powerLattice;
+
+// module.exports.powerLattice = powerLattice;

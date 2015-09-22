@@ -1,3 +1,5 @@
+module.exports.State = State;
+
 function State(i, l) {
     this.lattice = l;
     this.map = {}; //set of variable -> Lattice
@@ -8,12 +10,16 @@ function State(i, l) {
 
 
 
-
+    //apply the F function associated to the state
     this.applyF = function() {
-        var that = this;
-        return this.f.apply(that, []);
+        if (this.f) {
+            var that = this;
+            return this.f.apply(that, []);
+        };
     };
 
+    //join the values of the map lattice from parents
+    //can (should) be used by f
     this.join = function(k, v) {
         //gather all variables from parents
         var parents_map = {};
@@ -51,80 +57,23 @@ function State(i, l) {
 
     };
 
-    this.variableBefore = function(k) {
-        var parents_v =  [];
+    //get the value of k only from parent nodes
+    this.getParentValue = function(k) {
+        var parents_v = [];
         for (var i = 0; i < this.parents.length; i++) {
             if (this.parents[i].map[k]) parents_v.push(this.parents[i].map[k]);
         };
-        if (parents_v.length === 0) return 'B';
+        if (parents_v.length === 0) return l.getBottom();
         else return this.lattice.getLeastUpper(parents_v)[0];
     };
 
-    this.variableAfter = function(k) {
+    //get the value after a join and after F
+    this.getValue = function(k) {
         return this.map[k];
     };
 
 };
 
-function ifStatement() {
-	return this.join();
-}
-
-function variableDeclaration(v) {
-    return this.join(v, '?');
-};
-
-function variableAffectationLiteral(v, lit) {
-    var val = 'B';
-    var num = parseInt(lit);
-    if (!isNaN(num)) {
-        if (num >= 0) {
-            val = '+'
-        } else val = '-';
-    };
-    return this.join(v, val);
-};
-
-function variableAffectationIdentifier(v, id) {
-	var v_id = this.variableBefore(id);
-	return this.join(v,v_id);
-};
-
-function variableAffectationExpression(v, exp) {
-	var l = this.variableBefore(exp.l);
-	var r = this.variableBefore(exp.r);
-	return this.join(v,elementExpression(l,r,exp.op));
-};
-
-function elementExpression(l,r,op) {
-	switch (op) {
-		case('+') : return signPlus(l,r); break;
-		case('-') : return signMinus(l,r); break;
-		case('*') : return signPower(l,r); break;
-		default : return 'B';
-	};
-};
-
-function signPlus(l,r) {
-	if (l === '+' && r === '+') return '+';
-	if (l === '-' && r === '-') return '-';
-	else return '?';
-};
-
-function signMinus(l,r) {
-	if (l === '-' && r === '+') return '-';
-	else if (l === '+' && r === '-') return '+';
-	else return '?';
-};
-
-function signPower(l,r) {
-	return '?';
-};
 
 
-module.exports.State = State;
-module.exports.variableDeclaration = variableDeclaration;
-module.exports.variableAffectationLiteral = variableAffectationLiteral;
-module.exports.variableAffectationIdentifier = variableAffectationIdentifier;
-module.exports.variableAffectationExpression = variableAffectationExpression;
-module.exports.isStatement = ifStatement;
+

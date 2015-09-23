@@ -20,7 +20,7 @@ function State(i, l) {
 
     //join the values of the map lattice from parents
     //can (should) be used by f
-    this.join = function(k, v) {
+    this.joinMap = function(k, v) {
         //gather all variables from parents
         var parents_map = {};
         for (var i = 0; i < this.parents.length; i++) {
@@ -51,7 +51,8 @@ function State(i, l) {
 
         };
 
-        //if (!changed) console.log('no change');
+        // if (!changed) console.log('no change');
+        // else console.log('change');
 
         return changed;
 

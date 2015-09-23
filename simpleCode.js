@@ -1,12 +1,13 @@
 var a;
 var b;
-// a = 42;
-// b = -3;
-// b = a;
-// a = a + b;
-// b = a - b;
-// a = (a + b) -42;
-
+var c;
+a = 42;
+b = 60;
+b = a;
+a = a + b;
+//b = a - b;
+a = (a + b);// -42;
+b = c;
 // c = a;
 
 
@@ -22,6 +23,7 @@ var b;
 while (true) {
 	a=b;
 	b=3;
+	c=a;
 };
 
 // for (a=0 ; a < 5 ; a++) {

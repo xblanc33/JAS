@@ -16,7 +16,7 @@ function generateStates(abst) {
         last_state = generateState(abst.instructions[i], states, last_state);
     };
 
-    return states;
+    return {'success':true, 'all':states,'last':last_state , 'first':states[0]};
 };
 
 
@@ -56,7 +56,7 @@ function generateReadVariable(inst, states, last_state) {
     var ns = new state.State('read'+state_id, sil.l);
     state_id++;
     ns.f = function() {
-        sil.readVariable.apply(this, [inst]);
+        return sil.readVariable.apply(this, [inst]);
     };
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
@@ -67,7 +67,7 @@ function generateWriteVariable(inst, states, last_state) {
     var ns = new state.State('write'+state_id, sil.l);
     state_id++;
     ns.f = function() {
-        sil.writeVariable.apply(this, [inst]);
+        return sil.writeVariable.apply(this, [inst]);
     };
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
@@ -90,7 +90,7 @@ function generateIf(inst, states, last_state) {
     //if start
     var s_start_if = new state.State('start_if'+state_id, sil.l);
     s_start_if.f = function() {
-        sil.ifstart.apply(this, [inst]);
+        return sil.ifstart.apply(this, [inst]);
     };
     state_id++;
     if (last_state) s_start_if.parents.push(last_state);
@@ -99,32 +99,32 @@ function generateIf(inst, states, last_state) {
     //if end
     var s_end_if = new state.State('end_if'+state_id, sil.l);
     s_end_if.f = function() {
-        sil.ifend.apply(this, [inst]);
+        return sil.ifend.apply(this, [inst]);
     };
     state_id++;
     states.push(s_end_if);
 
     //consequente
     if (inst.consequent) {
-        var consequent_states = generateStates(inst.consequent);
-        for (var i = 0; i < consequent_states.length; i++) {
-            states.push(consequent_states[i])
+    	var consequent = generateStates(inst.consequent);
+        for (var i = 0; i < consequent.all.length; i++) {
+            states.push(consequent.all[i])
         };
-        if (consequent_states && consequent_states.length > 0) {
-        	consequent_states[0].parents.push(s_start_if);
-            s_end_if.parents.push(consequent_states[consequent_states.length - 1]);
+        if (consequent && consequent.all.length > 0) {
+        	consequent.all[0].parents.push(s_start_if);
+            s_end_if.parents.push(consequent.last);
         };
     };
 
     //alternate
     if (inst.alternate) {
-    	var alternate_states = generateStates(inst.alternate);
-        for (var i = 0; i < alternate_states.length; i++) {
-            states.push(alternate_states[i])
+    	var alternate = generateStates(inst.alternate);
+        for (var i = 0; i < alternate.all.length; i++) {
+            states.push(alternate.all[i])
         };
-        if (alternate_states && alternate_states.length > 0) {
-        	alternate_states[0].parents.push(s_start_if);
-            s_end_if.parents.push(alternate_states[alternate_states.length - 1]);
+        if (alternate && alternate.all.length > 0) {
+        	alternate.all[0].parents.push(s_start_if);
+            s_end_if.parents.push(alternate.last);
         };
 
     } else s_end_if.parents.push(s_start_if);
@@ -138,7 +138,7 @@ function generateWhile(inst, states, last_state) {
     //if start
     var s_while = new state.State('while'+state_id, sil.l);
     s_while.f = function() {
-        sil.whilebody.apply(this, [inst]);
+        return sil.whilebody.apply(this, [inst]);
     };
     state_id++;
     if (last_state) s_while.parents.push(last_state);
@@ -146,17 +146,43 @@ function generateWhile(inst, states, last_state) {
 
     //body
     if (inst.body) {
-        var body_states = generateStates(inst.body);
-        for (var i = 0; i < body_states.length; i++) {
-            states.push(body_states[i])
+        var body = generateStates(inst.body);
+        for (var i = 0; i < body.all.length; i++) {
+            states.push(body.all[i])
         };
-        if (body_states && body_states.length > 0) {
-        	body_states[0].parents.push(s_while);
-            s_while.parents.push(body_states[body_states.length - 1]);
+        if (body && body.all.length > 0) {
+        	body.all[0].parents.push(s_while);
+            s_while.parents.push(body.last);
         };
     };
 
     return s_while;
+
+};
+
+function generateFor(inst, states, last_state) {
+    //if start
+    var s_for = new state.State('for'+state_id, sil.l);
+    s_for.f = function() {
+        return sil.forbody.apply(this, [inst]);
+    };
+    state_id++;
+    if (last_state) s_for.parents.push(last_state);
+    states.push(s_for);
+
+    //body
+    if (inst.body) {
+        var body = generateStates(inst.body);
+        for (var i = 0; i < body.all.length; i++) {
+            states.push(body.all[i])
+        };
+        if (body && body.all.length > 0) {
+        	body.all[0].parents.push(s_for);
+            s_for.parents.push(body.last);
+        };
+    };
+
+    return s_for;
 
 };
 

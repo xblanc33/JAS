@@ -8,23 +8,23 @@ l.enforceAll();
 
 //x is the declared variable
 function variableDeclaration(inst) {
-    return this.join(inst.x, 'B');
+    return this.joinMap(inst.x, 'B');
 };
 
 
 //x is the readen variable. v is the new created variable that contains the value of x
 function readVariable(inst) {
-    return (this.join(inst.v, this.getParentValue(inst.x)));
+    return (this.joinMap(inst.v, this.getParentValue(inst.x)));
 };
 
 //x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
 function writeVariable(inst) {
     if (inst.jstype == 'Literal') {
         var val = signOfLiteral(inst.v);
-        return this.join(inst.x, val);
+        return this.joinMap(inst.x, val);
     } else { //'Identifier'
         var v_id = this.getParentValue(inst.v);
-        return this.join(inst.x, v_id);
+        return this.joinMap(inst.x, v_id);
     }
 };
 
@@ -44,10 +44,10 @@ function operation(op) {
     if (op.arity == 'unary') {
         if (op.xjstype == 'Literal') {
             var val = signOfLiteral(op.x);
-            return this.join(op.r, elementUnaryExpression(val, op.operator));
+            return this.joinMap(op.r, elementUnaryExpression(val, op.operator));
         } else { //'Identifier'
             var v_id = this.getParentValue(op.x);
-            return this.join(op.r, v_id);
+            return this.joinMap(op.r, v_id);
         }
     } else { //'binary'
         var l, r;
@@ -57,7 +57,7 @@ function operation(op) {
         if (op.yjstype == 'Literal') {
             r = signOfLiteral(op.y);
         } else r = this.getParentValue(op.y);
-        return this.join(op.r, elementBinaryExpression(l, r, op.operator));
+        return this.joinMap(op.r, elementBinaryExpression(l, r, op.operator));
     };
 };
 
@@ -107,16 +107,21 @@ function signPower(l, r) {
 
 
 function ifstart(inst) {
-	return this.join();
+	return this.joinMap();
 };
 
 function ifend(inst) {
-	return this.join();
+	return this.joinMap();
 };
 
 function whilebody(inst) {
-	return this.join();
+	return this.joinMap();
 };
+
+function forbody(inst) {
+	return this.joinMap();
+};
+
 
 
 module.exports.l = l;
@@ -127,3 +132,4 @@ module.exports.operation = operation;
 module.exports.ifstart = ifstart;
 module.exports.ifend = ifend;
 module.exports.whilebody = whilebody;
+module.exports.forbody = forbody;

@@ -484,6 +484,9 @@ function visitFunctionDeclaration(node, abst) {
     fun.type = 'function';
     fun.body = {};
     fun.body.instructions = [];
+    if (node.id) {
+        fun.id = node.id.name;
+    };
     if (node.body.type === 'BlockStatement') {
         for (var i = 0; i < node.body.body.length; i++) {
             visitNode(node.body.body[i], fun.body);

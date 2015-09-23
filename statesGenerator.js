@@ -16,7 +16,12 @@ function generateStates(abst) {
         last_state = generateState(abst.instructions[i], states, last_state);
     };
 
-    return {'success':true, 'all':states,'last':last_state , 'first':states[0]};
+    return {
+        'success': true,
+        'all': states,
+        'last': last_state,
+        'first': states[0]
+    };
 };
 
 
@@ -41,7 +46,7 @@ function generateState(inst, states, last_state) {
 };
 
 function generateDeclareVariable(inst, states, last_state) {
-    var ns = new state.State('declare'+state_id, sil.l);
+    var ns = new state.State('declare' + state_id, sil.l);
     state_id++;
     ns.f = function() {
         return sil.variableDeclaration.apply(this, [inst]);
@@ -53,7 +58,7 @@ function generateDeclareVariable(inst, states, last_state) {
 
 
 function generateReadVariable(inst, states, last_state) {
-    var ns = new state.State('read'+state_id, sil.l);
+    var ns = new state.State('read' + state_id, sil.l);
     state_id++;
     ns.f = function() {
         return sil.readVariable.apply(this, [inst]);
@@ -64,7 +69,7 @@ function generateReadVariable(inst, states, last_state) {
 };
 
 function generateWriteVariable(inst, states, last_state) {
-    var ns = new state.State('write'+state_id, sil.l);
+    var ns = new state.State('write' + state_id, sil.l);
     state_id++;
     ns.f = function() {
         return sil.writeVariable.apply(this, [inst]);
@@ -76,7 +81,7 @@ function generateWriteVariable(inst, states, last_state) {
 
 
 function generateOperation(inst, states, last_state) {
-    var ns = new state.State('operation'+state_id, sil.l);
+    var ns = new state.State('operation' + state_id, sil.l);
     state_id++;
     ns.f = function() {
         sil.operation.apply(this, [inst]);
@@ -88,7 +93,7 @@ function generateOperation(inst, states, last_state) {
 
 function generateIf(inst, states, last_state) {
     //if start
-    var s_start_if = new state.State('start_if'+state_id, sil.l);
+    var s_start_if = new state.State('start_if' + state_id, sil.l);
     s_start_if.f = function() {
         return sil.ifstart.apply(this, [inst]);
     };
@@ -97,7 +102,7 @@ function generateIf(inst, states, last_state) {
     states.push(s_start_if);
 
     //if end
-    var s_end_if = new state.State('end_if'+state_id, sil.l);
+    var s_end_if = new state.State('end_if' + state_id, sil.l);
     s_end_if.f = function() {
         return sil.ifend.apply(this, [inst]);
     };
@@ -106,24 +111,24 @@ function generateIf(inst, states, last_state) {
 
     //consequente
     if (inst.consequent) {
-    	var consequent = generateStates(inst.consequent);
+        var consequent = generateStates(inst.consequent);
         for (var i = 0; i < consequent.all.length; i++) {
             states.push(consequent.all[i])
         };
         if (consequent && consequent.all.length > 0) {
-        	consequent.all[0].parents.push(s_start_if);
+            consequent.all[0].parents.push(s_start_if);
             s_end_if.parents.push(consequent.last);
         };
     };
 
     //alternate
     if (inst.alternate) {
-    	var alternate = generateStates(inst.alternate);
+        var alternate = generateStates(inst.alternate);
         for (var i = 0; i < alternate.all.length; i++) {
             states.push(alternate.all[i])
         };
         if (alternate && alternate.all.length > 0) {
-        	alternate.all[0].parents.push(s_start_if);
+            alternate.all[0].parents.push(s_start_if);
             s_end_if.parents.push(alternate.last);
         };
 
@@ -136,7 +141,7 @@ function generateIf(inst, states, last_state) {
 
 function generateWhile(inst, states, last_state) {
     //if start
-    var s_while = new state.State('while'+state_id, sil.l);
+    var s_while = new state.State('while' + state_id, sil.l);
     s_while.f = function() {
         return sil.whilebody.apply(this, [inst]);
     };
@@ -151,7 +156,7 @@ function generateWhile(inst, states, last_state) {
             states.push(body.all[i])
         };
         if (body && body.all.length > 0) {
-        	body.all[0].parents.push(s_while);
+            body.all[0].parents.push(s_while);
             s_while.parents.push(body.last);
         };
     };
@@ -162,7 +167,7 @@ function generateWhile(inst, states, last_state) {
 
 function generateFor(inst, states, last_state) {
     //if start
-    var s_for = new state.State('for'+state_id, sil.l);
+    var s_for = new state.State('for' + state_id, sil.l);
     s_for.f = function() {
         return sil.forbody.apply(this, [inst]);
     };
@@ -172,12 +177,12 @@ function generateFor(inst, states, last_state) {
 
     //init
     if (inst.init) {
-    	var init = generateStates(inst.init);
-    	for (var i = 0; i < init.all.length; i++) {
+        var init = generateStates(inst.init);
+        for (var i = 0; i < init.all.length; i++) {
             states.push(init.all[i])
         };
         if (init && init.all.length > 0) {
-        	init.all[0].parents.push(s_for);
+            init.all[0].parents.push(s_for);
             //s_for.parents.push(body.last);
         };
     };
@@ -186,12 +191,12 @@ function generateFor(inst, states, last_state) {
 
     //update
     if (inst.update) {
-    	var update = generateStates(inst.update);
-    	for (var i = 0; i < update.all.length; i++) {
+        var update = generateStates(inst.update);
+        for (var i = 0; i < update.all.length; i++) {
             states.push(update.all[i])
         };
         if (update && update.all.length > 0) {
-        	update.all[0].parents.push(init.last);
+            update.all[0].parents.push(init.last);
             //s_for.parents.push(body.last);
         };
     };
@@ -203,13 +208,16 @@ function generateFor(inst, states, last_state) {
             states.push(body.all[i])
         };
         if (body && body.all.length > 0) {
-        	if (update) {
-        		body.all[0].parents.push(update.last);
-        	} else body.all[0].parents.push(s_for);
-            s_for.parents.push(body.last);
+            if (update) {
+                body.all[0].parents.push(update.last);
+                update.all[0].parents.push(body.last);
+            } else {
+                body.all[0].parents.push(s_for);
+                s_for.parents.push(body.last);
+            };
+            return body.last;
         };
     };
-
     return s_for;
 
 };

@@ -101,8 +101,8 @@ function signMinus(l, r) {
 
 function signPower(l, r) {
     if (l === '+' && r === '+') return '+';
-    if (l === '-' && r === '-') return '-';
-    else return '?';
+    if (l === '-' && r === '-') return '+';
+    else return '-';
 };
 
 

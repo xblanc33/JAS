@@ -367,9 +367,65 @@ function visitWhileStatement(node, abst) {
 };
 
 
+function visitInit(node, abst) {
+    switch (node.type) {
+        case 'VariableDeclaration':
+            visitVariableDeclaration(node, abst);
+            break;
+        case 'AssignmentExpression':
+            var write = {};
+            write.type = 'write-variable';
+            write.x = node.left.name;
+
+            switch (node.right.type) {
+                case 'Literal':
+                    write.v = node.right.value;
+                    write.jstype = 'Literal';
+                    break;
+                case 'Identifier':
+                    var read = {};
+                    read.type = 'read-variable';
+                    read.x = node.right.name;
+                    read.v = '__v_' + tmp_var_id;
+                    tmp_var_id++;
+                    abst.instructions.push(read);
+                    write.v = read.v;
+                    write.jstype = "Identifier";
+                    break;
+                case 'BinaryExpression':
+                    visitBinaryExpression(node.right, abst);
+                    write.v = abst.instructions[abst.instructions.length - 1].r;
+                    write.jstype = "Identifier";
+                    break;
+                case 'UnaryExpression':
+                    visitUnaryExpression(node.right, abst);
+                    write.v = abst.instructions[abst.instructions.length - 1].r;
+                    write.jstype = "Identifier";
+                    break;
+                default:
+                    break;
+
+            };
+            abst.instructions.push(write);
+            break;
+        case 'UnaryExpression':
+            visitUnaryExpression(node, abst);
+            break;
+        default:
+            break;
+
+    };
+};
+
+
 function visitForStatement(node, abst) {
     var fo = {};
     fo.type = 'for';
+
+    fo.init = {};
+    fo.init.instructions = [];
+    visitInit(node.init, fo.init);
+
     fo.body = {};
     fo.body.instructions = [];
     if (node.body.type === 'BlockStatement') {

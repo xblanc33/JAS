@@ -170,6 +170,18 @@ function generateFor(inst, states, last_state) {
     if (last_state) s_for.parents.push(last_state);
     states.push(s_for);
 
+    //init
+    if (inst.init) {
+    	var init = generateStates(inst.init);
+    	for (var i = 0; i < init.all.length; i++) {
+            states.push(init.all[i])
+        };
+        if (init && init.all.length > 0) {
+        	init.all[0].parents.push(s_for);
+            //s_for.parents.push(body.last);
+        };
+    };
+
     //body
     if (inst.body) {
         var body = generateStates(inst.body);
@@ -177,7 +189,9 @@ function generateFor(inst, states, last_state) {
             states.push(body.all[i])
         };
         if (body && body.all.length > 0) {
-        	body.all[0].parents.push(s_for);
+        	if (init) {
+        		body.all[0].parents.push(init.last);
+        	} else body.all[0].parents.push(s_for);
             s_for.parents.push(body.last);
         };
     };

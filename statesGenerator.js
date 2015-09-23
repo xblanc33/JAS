@@ -182,6 +182,20 @@ function generateFor(inst, states, last_state) {
         };
     };
 
+    //test
+
+    //update
+    if (inst.update) {
+    	var update = generateStates(inst.update);
+    	for (var i = 0; i < update.all.length; i++) {
+            states.push(update.all[i])
+        };
+        if (update && update.all.length > 0) {
+        	update.all[0].parents.push(init.last);
+            //s_for.parents.push(body.last);
+        };
+    };
+
     //body
     if (inst.body) {
         var body = generateStates(inst.body);
@@ -189,8 +203,8 @@ function generateFor(inst, states, last_state) {
             states.push(body.all[i])
         };
         if (body && body.all.length > 0) {
-        	if (init) {
-        		body.all[0].parents.push(init.last);
+        	if (update) {
+        		body.all[0].parents.push(update.last);
         	} else body.all[0].parents.push(s_for);
             s_for.parents.push(body.last);
         };

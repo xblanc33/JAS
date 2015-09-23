@@ -44,6 +44,9 @@ function visitNode(node, abst) {
         case 'ExpressionStatement':
             visitExpressionStatement(node, abst);
             break;
+        case 'UpdateExpression':
+            visitUpdateExpression(node, abst);
+            break;
         case 'IfStatement':
             visitIfStatement(node, abst);
             break;
@@ -278,6 +281,40 @@ function visitExpressionStatement(node, abst) {
 };
 
 
+function visitUpdateExpression(node, abst) {
+    if (node.argument.type == 'Identifier') {
+        var read = {};
+        read.type = 'read-variable';
+        read.x = node.argument.name;
+        read.v = '__v_' + tmp_var_id;
+        tmp_var_id++;
+        abst.instructions.push(read);
+
+        var op = {};
+        op.type = 'operation';
+        op.operator = node.operator.substring(0, 1);
+        op.arity = 'binary';
+        op.x = read.v;
+        op.xjstype = 'Identifier';
+        op.y = 1;
+        op.yjstype = 'Literal';
+        op.r = '__v_' + tmp_var_id;
+        tmp_var_id++;
+        abst.instructions.push(op);
+
+        var write = {};
+        write.type = 'write-variable';
+        write.x = node.argument.name;
+        write.v = op.r;
+        write.jstype = 'Identifier';
+        abst.instructions.push(write);
+
+    } else { //Literal?
+
+    };
+
+};
+
 function visitTest(node, abst) {
     switch (node.type) {
         case 'Identifier':
@@ -418,6 +455,7 @@ function visitInit(node, abst) {
 };
 
 
+
 function visitForStatement(node, abst) {
     var fo = {};
     fo.type = 'for';
@@ -425,6 +463,10 @@ function visitForStatement(node, abst) {
     fo.init = {};
     fo.init.instructions = [];
     visitInit(node.init, fo.init);
+
+    fo.update = {};
+    fo.update.instructions = [];
+    visitNode(node.update, fo.update);
 
     fo.body = {};
     fo.body.instructions = [];

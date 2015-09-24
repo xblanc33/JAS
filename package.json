@@ -1,0 +1,20 @@
+{
+  "name": "GetJS",
+  "version": "0.0.1",
+  "description": "début de compréhension d'une analyse statique en JS",
+  "main": "parse.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "esprima": "^2.5.0",
+    "estraverse": "^4.1.0",
+    "slimerjs": "^0.9.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Xavier Blanc",
+  "license": "ISC"
+}

@@ -1,27 +1,22 @@
 module.exports.State = State;
 
-function State(i, l) {
-    this.lattice = l;
-    this.map = {}; //set of variable -> Lattice
-    this.f; //function to exec that should modify v and return true if changed
+function State(inst, type) {
     this.parents = []; //set of parent node
     //this.children = []; //set of children node
-    this.id = i; //could be line number
+    this.inst = inst;
+    this.type = type;
 
-
-
-    //apply the F function associated to the state
-    this.applyF = function() {
-        if (this.f) {
-            var that = this;
-            return this.f.apply(that, []);
-        };
-    };
 
     //join the values of the map lattice from parents
     //can (should) be used by f
     this.joinMap = function(k, v) {
         //gather all variables from parents
+        // console.log('JoinMap');
+        // if (k && v) {
+        //     console.log(k);
+        //     console.log(v);
+        // } else console.log('empty parameters');
+
         var parents_map = {};
         for (var i = 0; i < this.parents.length; i++) {
             for (pk in this.parents[i].map) {
@@ -35,19 +30,23 @@ function State(i, l) {
         for (pk in parents_map) {
             if (!k || (pk !== k)) {
                 if (this.map[pk]) parents_map[pk].push(this.map[pk]); //include the state mapping 
-                var pv = this.lattice.getLeastUpper(parents_map[pk])[0];
-                if (!this.map[pk] || (pv != this.map[pk])) {
+                var pv = this.lattice.getLeastUpper(parents_map[pk]);
+                if (!this.map[pk] || (!this.lattice.equality(pv, this.map[pk]))) {
                     this.map[pk] = pv;
-                    //console.log('in state '+this.id+' now ' + pk + ' is ' + pv);
+                    // console.log('in state ' + this.id + ' now ' + pk + ' is ' + pv);
                     changed = true;
                 };
             };
         };
 
-        if (k && v && (v != this.map[k])) {
-            this.map[k] = v;
-            //console.log('in state '+this.id+' now ' + k + ' is ' + v);
-            changed = true;
+        if (k && v) {
+            if (this.map[k] && this.lattice.equality(v, this.map[k])) {
+
+            } else {
+                this.map[k] = v;
+                // console.log('in state ' + this.id + ' now ' + k + ' is ' + v);
+                changed = true;
+            };
 
         };
 
@@ -60,12 +59,13 @@ function State(i, l) {
 
     //get the value of k only from parent nodes
     this.getParentValue = function(k) {
+        // console.log('getParentValue:' + k);
         var parents_v = [];
         for (var i = 0; i < this.parents.length; i++) {
             if (this.parents[i].map[k]) parents_v.push(this.parents[i].map[k]);
         };
-        if (parents_v.length === 0) return l.getBottom();
-        else return this.lattice.getLeastUpper(parents_v)[0];
+        if (parents_v.length === 0) return this.lattice.getBottom();
+        else return this.lattice.getLeastUpper(parents_v);
     };
 
     //get the value after a join and after F

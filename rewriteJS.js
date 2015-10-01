@@ -1,3 +1,7 @@
+//rewrite JS code to have something easier to parse
+//the JS code is no more an AST, but a sequence of intructions (where some instructions can be sequence too)
+//the main function is rewriteJS(fileName)
+
 var esprima = require('esprima');
 var fs = require('fs');
 
@@ -257,23 +261,43 @@ function visitExpressionStatement(node, abst) {
                     tmp_var_id++;
                     abst.instructions.push(read);
                     write.v = read.v;
-                    write.jstype = "Identifier";
+                    write.jstype = 'Identifier';
                     break;
                 case 'BinaryExpression':
                     visitBinaryExpression(node.expression.right, abst);
                     write.v = abst.instructions[abst.instructions.length - 1].r;
-                    write.jstype = "Identifier";
+                    write.jstype = 'Identifier';
                     break;
                 case 'UnaryExpression':
                     visitUnaryExpression(node.expression.right, abst);
                     write.v = abst.instructions[abst.instructions.length - 1].r;
-                    write.jstype = "Identifier";
+                    write.jstype = 'Identifier';
+                    break;
+                case 'FunctionExpression':
+                    visitFunctionExpression(node.expression.right, abst);
+                    write.v = abst.instructions[abst.instructions.length - 1].id;
+                    write.jstype = 'Identifier';
                     break;
                 default:
                     break;
 
             };
             abst.instructions.push(write);
+            break;
+        case 'CallExpression' :
+            var call = {};
+            call.type = 'call-expression';
+            switch (node.expression.callee.type)  {
+                case 'Identifier' : 
+                    call.callee = node.expression.callee.name;
+                    break;
+                case 'FunctionExpression' : 
+                    visitFunctionExpression(node.expression.callee, abst);
+                    call.callee = abst.instructions[abst.instructions.length - 1].id;
+                    break;
+
+            };
+            abst.instructions.push(call);
             break;
         default:
             break;
@@ -481,12 +505,15 @@ function visitForStatement(node, abst) {
 
 function visitFunctionDeclaration(node, abst) {
     var fun = {};
-    fun.type = 'function';
+    fun.type = 'function-declaration';
     fun.body = {};
     fun.body.instructions = [];
     if (node.id) {
         fun.id = node.id.name;
-    };
+    } else {
+        fun.id = '__f_'+tmp_var_id;
+        tmp_var_id++;
+    }
     if (node.body.type === 'BlockStatement') {
         for (var i = 0; i < node.body.body.length; i++) {
             visitNode(node.body.body[i], fun.body);
@@ -494,3 +521,7 @@ function visitFunctionDeclaration(node, abst) {
     } else visitNode(node.body, fun.body);
     abst.instructions.push(fun);
 };
+
+function visitFunctionExpression(node, abst) {
+    visitFunctionDeclaration(node, abst);
+}

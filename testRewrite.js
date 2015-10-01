@@ -2,19 +2,22 @@ var rJS = require('./rewriteJS.js');
 
 var abst = rJS.rewriteJS('simpleCode.js')
 
-//console.log(abst);
+console.log(abst);
 
 
-var sg = require('./statesGenerator.js');
-
+var sg = require('./statesBuilder.js');
 var genStates = sg.generateStates(abst);
 //console.log(genStates);
+//console.log(genStates.all.length);
 
+//var functionLattice = require('./functionLattice.js');
+var lattice = require('./simpleIntegerLattice.js');
 
-var eng = require('./engine.js');
-eng.fixedPoint(genStates.all);
+var eng = require('./fixPointEngine.js');
+eng.init(genStates.all, lattice);
+eng.run(genStates.all);
+eng.printAllVariablesAtTheEnd(genStates.last);
 
-eng.printVariablesAtTheEnd(genStates.last);
 
 
 

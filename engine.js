@@ -24,14 +24,25 @@ function fixedPoint(states) {
 
 function printVariablesAtTheEnd(lastState) {
 
-	//console.log(lastState.id);
+    //console.log(lastState.id);
 
-	for (v in lastState.map) {
-		if (v.lastIndexOf('__v_') == -1) {
-			console.log('Variable '+v+ ' = '+lastState.map[v]);
-		};
-	};
+    for (v in lastState.map) {
+        if (v.lastIndexOf('__v_') == -1) {
+            console.log('Variable ' + v + ' = ' + lastState.map[v]);
+        };
+    };
+};
+
+
+function printAllVariablesAtTheEnd(lastState) {
+
+    //console.log(lastState.id);
+
+    for (v in lastState.map) {
+        console.log('Variable ' + v + ' = ' + lastState.map[v]);
+    };
 };
 
 module.exports.fixedPoint = fixedPoint;
 module.exports.printVariablesAtTheEnd = printVariablesAtTheEnd;
+module.exports.printAllVariablesAtTheEnd = printAllVariablesAtTheEnd;

@@ -36,7 +36,7 @@ function Lattice(s_elements) {
 
     //return the bottom element
     this.getTop = function() {
-        return this.elements[this.elements.length-1];
+        return this.elements[this.elements.length - 1];
     };
 
     //return all the elements of the lattice
@@ -78,7 +78,7 @@ function Lattice(s_elements) {
     this.enforceSymmetry = function() {
         //enforce symmetry
         for (var i = 0; i < this.size; i++) {
-            for (var j = 0; j < this.size ; j++) {
+            for (var j = 0; j < this.size; j++) {
                 if (i !== j) this.orders[j][i] = -this.orders[i][j];
             };
         };
@@ -133,9 +133,9 @@ function Lattice(s_elements) {
         for (var i = 0; i < this.size; i++) {
             tmp_orders.push([]);
             for (var j = 0; j < this.size; j++) {
-            	if (i===0) tmp_orders[i].push(-1)
-                else if (j===0) tmp_orders[i].push(1)
-                else tmp_orders[i].push(this.orders[i-1][j-1]);
+                if (i === 0) tmp_orders[i].push(-1)
+                else if (j === 0) tmp_orders[i].push(1)
+                else tmp_orders[i].push(this.orders[i - 1][j - 1]);
             };
         };
         this.orders = tmp_orders;
@@ -160,12 +160,12 @@ function Lattice(s_elements) {
         for (var i = 0; i < this.size; i++) {
             tmp_orders.push([]);
             for (var j = 0; j < this.size; j++) {
-            	if (i===this.size-1) tmp_orders[i].push(1)
-                else if (j===this.size-1) tmp_orders[i].push(-1)
+                if (i === this.size - 1) tmp_orders[i].push(1)
+                else if (j === this.size - 1) tmp_orders[i].push(-1)
                 else tmp_orders[i].push(this.orders[i][j]);
             };
         };
-        tmp_orders[this.size-1][this.size-1] = -1;
+        tmp_orders[this.size - 1][this.size - 1] = -1;
         this.orders = tmp_orders;
     };
 
@@ -185,6 +185,10 @@ function Lattice(s_elements) {
     this.isUpper = function(x, y) {
         if (this.getOrder(x, y) === 1) return true
         else return false;
+    };
+
+    this.equality = function(e1, e2) {
+        return e1 == e2;
     };
 
     //return all elements that are upper of x
@@ -219,7 +223,7 @@ function Lattice(s_elements) {
             };
             if (isLeast) least.push(allUppers[i]);
         };
-        return least;
+        return least[0];
     };
 
 

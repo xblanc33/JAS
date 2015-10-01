@@ -33,3 +33,4 @@ function isSet(a) {
 
 module.exports.inter = inter;
 module.exports.union = union;
+module.exports.toSet = toSet;

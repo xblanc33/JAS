@@ -7,24 +7,24 @@ l.down('?');
 l.enforceAll();
 
 //x is the declared variable
-function variableDeclaration(inst) {
-    return this.joinMap(inst.x, 'B');
+function variableDeclaration() {
+    return this.joinMap(this.inst.x, 'B');
 };
 
 
 //x is the readen variable. v is the new created variable that contains the value of x
-function readVariable(inst) {
-    return (this.joinMap(inst.v, this.getParentValue(inst.x)));
+function readVariable() {
+    return (this.joinMap(this.inst.v, this.getParentValue(this.inst.x)));
 };
 
 //x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
-function writeVariable(inst) {
-    if (inst.jstype == 'Literal') {
-        var val = signOfLiteral(inst.v);
-        return this.joinMap(inst.x, val);
+function writeVariable() {
+    if (this.inst.jstype == 'Literal') {
+        var val = signOfLiteral(this.inst.v);
+        return this.joinMap(this.inst.x, val);
     } else { //'Identifier'
-        var v_id = this.getParentValue(inst.v);
-        return this.joinMap(inst.x, v_id);
+        var v_id = this.getParentValue(this.inst.v);
+        return this.joinMap(this.inst.x, v_id);
     }
 };
 
@@ -40,24 +40,24 @@ function signOfLiteral(lit) {
 }
 
 //returns the sign of a literal
-function operation(op) {
-    if (op.arity == 'unary') {
-        if (op.xjstype == 'Literal') {
-            var val = signOfLiteral(op.x);
-            return this.joinMap(op.r, elementUnaryExpression(val, op.operator));
+function operation() {
+    if (this.inst.arity == 'unary') {
+        if (this.inst.xjstype == 'Literal') {
+            var val = signOfLiteral(this.inst.x);
+            return this.joinMap(this.inst.r, elementUnaryExpression(val, this.inst.operator));
         } else { //'Identifier'
-            var v_id = this.getParentValue(op.x);
-            return this.joinMap(op.r, v_id);
+            var v_id = this.getParentValue(this.inst.x);
+            return this.joinMap(this.inst.r, v_id);
         }
     } else { //'binary'
         var l, r;
-        if (op.xjstype == 'Literal') {
-            l = signOfLiteral(op.x);
-        } else l = this.getParentValue(op.x);
-        if (op.yjstype == 'Literal') {
-            r = signOfLiteral(op.y);
-        } else r = this.getParentValue(op.y);
-        return this.joinMap(op.r, elementBinaryExpression(l, r, op.operator));
+        if (this.inst.xjstype == 'Literal') {
+            l = signOfLiteral(this.inst.x);
+        } else l = this.getParentValue(this.inst.x);
+        if (this.inst.yjstype == 'Literal') {
+            r = signOfLiteral(this.inst.y);
+        } else r = this.getParentValue(this.inst.y);
+        return this.joinMap(this.inst.r, elementBinaryExpression(l, r, this.inst.operator));
     };
 };
 
@@ -106,20 +106,30 @@ function signPower(l, r) {
 };
 
 
-function ifstart(inst) {
+function ifstart() {
 	return this.joinMap();
 };
 
-function ifend(inst) {
+function ifend() {
 	return this.joinMap();
 };
 
-function whilebody(inst) {
+function whilebody() {
 	return this.joinMap();
 };
 
-function forbody(inst) {
+function forbody() {
 	return this.joinMap();
+};
+
+
+function functionDeclaration() {
+    return this.joinMap();
+};
+
+
+function callExpression() {
+    return this.joinMap();
 };
 
 
@@ -133,3 +143,5 @@ module.exports.ifstart = ifstart;
 module.exports.ifend = ifend;
 module.exports.whilebody = whilebody;
 module.exports.forbody = forbody;
+module.exports.functionDeclaration = functionDeclaration;
+module.exports.callExpression = callExpression;

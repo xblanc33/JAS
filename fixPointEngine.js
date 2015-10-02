@@ -31,16 +31,28 @@ function attachLatticeFunctions(states, lattice) {
             case 'functionDeclaration':
                 states[i].f = lattice.functionDeclaration;
                 break;
-            case 'callExpression':
-                states[i].f = lattice.callExpression;
+            case 'callEntry':
+                states[i].f = lattice.callEntry;
+                break;
+            case 'callExit':
+                states[i].f = lattice.callExit;
+                break;
+            default : 
+                states[i].f = lattice.defaultState;
                 break;
         };
     };
 };
 
+function clean(states) {
+    for (var i = 0; i < states.length; i++) {
+        states[i].map = {};
+        states[i].f = undefined;
+    };
+};
 
 function init(states, lattice) {
-    attachLatticeFunctions(states,lattice);
+    attachLatticeFunctions(states, lattice);
 };
 
 function run(states) {
@@ -89,7 +101,7 @@ function printAllVariablesAtTheEnd(lastState) {
 };
 
 
-
+module.exports.clean = clean;
 module.exports.init = init;
 module.exports.run = run;
 module.exports.printVariablesAtTheEnd = printVariablesAtTheEnd;

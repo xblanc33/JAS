@@ -49,15 +49,27 @@ function functionDeclaration() {
     return (this.joinMap(this.inst.id, [this.inst.id]));
 };
 
-function callExpression() {
+function callEntry() {
     return this.joinMap();
 };
 
-function pre(state) {
-    if (state.inst.type == 'functionDeclaration') {
-        if (inst.id) {
-            l.addElement(inst.id, inst);
+function callExit() {
+    return this.joinMap();
+};
 
+function defaultState() {
+    return this.joinMap();
+};
+
+
+
+function pre(state) {
+    //console.log('pre');
+    if (state.type == 'functionDeclaration') {
+        //console.log('functionDeclaration');
+        if (state.inst.id) {
+            //console.log('addElement');
+            l.addElement(state.inst.id, state.inst);
         };
     };
 };
@@ -74,5 +86,7 @@ module.exports.ifend = ifend;
 module.exports.whilebody = whilebody;
 module.exports.forbody = forbody;
 module.exports.functionDeclaration = functionDeclaration;
-module.exports.callExpression = callExpression;
+module.exports.callEntry = callEntry;
+module.exports.callExit = callExit;
+module.exports.defaultState = defaultState;
 module.exports.pre = pre;

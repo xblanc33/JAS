@@ -106,42 +106,22 @@ function signPower(l, r) {
 };
 
 
-function ifstart() {
-	return this.joinMap();
-};
-
-function ifend() {
-	return this.joinMap();
-};
-
-function whilebody() {
-	return this.joinMap();
-};
-
-function forbody() {
-	return this.joinMap();
-};
 
 
-function functionDeclaration() {
+function defaultState() {
     return this.joinMap();
 };
-
-
-function callExpression() {
-    return this.joinMap();
-};
-
-
 
 module.exports.l = l;
 module.exports.variableDeclaration = variableDeclaration;
 module.exports.readVariable = readVariable;
 module.exports.writeVariable = writeVariable;
 module.exports.operation = operation;
-module.exports.ifstart = ifstart;
-module.exports.ifend = ifend;
-module.exports.whilebody = whilebody;
-module.exports.forbody = forbody;
-module.exports.functionDeclaration = functionDeclaration;
-module.exports.callExpression = callExpression;
+module.exports.ifstart = defaultState;
+module.exports.ifend = defaultState;
+module.exports.whilebody = defaultState;
+module.exports.forbody = defaultState;
+module.exports.callEntry = defaultState;
+module.exports.callExit = defaultState;
+module.exports.defaultState = defaultState;
+module.exports.functionDeclaration = defaultState;

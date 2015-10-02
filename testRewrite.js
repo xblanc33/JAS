@@ -7,10 +7,10 @@ console.log(abst);
 
 var sg = require('./statesBuilder.js');
 var genStates = sg.generateStates(abst);
-//console.log(genStates);
-//console.log(genStates.all.length);
+console.log(genStates);
+console.log(genStates.all.length);
 
-//var functionLattice = require('./functionLattice.js');
+//var lattice = require('./functionLattice.js');
 var lattice = require('./simpleIntegerLattice.js');
 
 var eng = require('./fixPointEngine.js');

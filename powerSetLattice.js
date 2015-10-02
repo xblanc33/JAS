@@ -6,18 +6,25 @@ module.exports.PowerSetLattice = PowerSetLattice;
 //s_elements contains all the elements of the lattice 
 //set the order between the elements with addOrder()
 //make the lattice with make()
-function PowerSetLattice(s_elements) {
+function PowerSetLattice() {
     //elements contains all the elements of the Lattice with Top and Bottom
     //Bottom is the first element
     //Top is the last element
-    this.elements = [];
+    this.keys = [];
+    this.values = {};
 
     //Size contains the size of the Lattice
-    this.size = this.elements.length;
+    this.size = this.keys.length;
 
     //add a new element
-    this.addElement = function(e) {
-        if (this.elements.indexOf(e) === -1) this.elements.push(e);
+    this.addElement = function(k , v) {
+        //console.log('k:'+k);
+        //console.log('v:'+v);
+        if (this.keys.indexOf(k) === -1) {
+            this.keys.push(k);
+            if (v) this.values[k] = v;
+        }
+
     };
 
     //return the bottom element
@@ -27,7 +34,7 @@ function PowerSetLattice(s_elements) {
 
     //return the bottom element
     this.getTop = function() {
-        return this.elements;
+        return this.keys;
     };
 
 

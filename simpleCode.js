@@ -1,27 +1,34 @@
-var a;
-var b;
-var c;
-a = 42;
-b = 60;
-b = a;
-a = a + b;
-//b = a - b;
-a = (a + b) + 44  + 50; // -42;
-b = c;
-// c = a;
+// var a;
+// var b;
+// var c;
+// a = 42;
+// b = 60;
+// b = a;
+// a = a + b;
+// //b = a - b;
+// a = (a + b) + 44  + 50; // -42;
+// b = c;
+// // c = a;
 
-for (var d=3 ; d <3 ; d++) {
-	c=4;
-};
+// if (true) {
+// 	a = 42;
+// }
+// else {
+// 	a = -42;
+// };
+
+// for (var d=3 ; d <3 ; d++) {
+// 	c=4;
+// };
 
 // b=c;
 // b++;
+// var c;
 
 // while (true) {
-// 	a = b;
 // 	b = c;
 // 	c = a;
-// 	a = 1;
+// 	a = -1;
 // }
 
 
@@ -48,31 +55,31 @@ for (var d=3 ; d <3 ; d++) {
 // for (i = 0 ; i < 5 ; i++) {
 // 	i =5;
 // };
+var a;
+
+function f() {
+  	a = 42;
+};
+
+function g() {
+	a = -43;
+};
+
+function h() {
+	a = 4;
+};
+
+f();
+
+if (true) {
+	a = f;
+} else {
+	a = g;
+}
 
 
-// function f() {
+b = a;
 
-// };
+b();
 
-// function g() {
-
-// };
-
-// function h() {
-// 	g();
-
-// };
-
-// f();
-
-// if (true) {
-// 	a = f;
-// } else {
-// 	a = f;
-// }
-
-// (function() {})();
-
-// b = a;
-
-// b();
+(function() {})(a=50);

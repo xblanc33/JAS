@@ -1,10 +1,16 @@
 module.exports.State = State;
 
-function State(inst, type) {
+var sid=0;
+
+function State(name, type, inst) {
     this.parents = []; //set of parent node
     //this.children = []; //set of children node
+    this.name = name;
     this.inst = inst;
     this.type = type;
+
+    this.sid='s'+sid;
+    sid++;
 
 
     //join the values of the map lattice from parents

@@ -69,7 +69,7 @@ function pre(state) {
         //console.log('functionDeclaration');
         if (state.inst.id) {
             //console.log('addElement');
-            l.addElement(state.inst.id, state.inst);
+            l.addElement(state.inst.id, state);
         };
     };
 };

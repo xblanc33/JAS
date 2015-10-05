@@ -45,7 +45,7 @@ function generateState(inst, states, last_state) {
 };
 
 function generateDeclareVariable(inst, states, last_state) {
-    var ns = new state.State(inst,'variableDeclaration');
+    var ns = new state.State( 'var_'+inst.x, 'variableDeclaration',inst);
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
     return ns;
@@ -53,14 +53,14 @@ function generateDeclareVariable(inst, states, last_state) {
 
 
 function generateReadVariable(inst, states, last_state) {
-    var ns = new state.State(inst,'readVariable');
+    var ns = new state.State('read_'+inst.x+'_to_'+inst.v, 'readVariable' , inst);
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
     return ns;
 };
 
 function generateWriteVariable(inst, states, last_state) {
-    var ns = new state.State(inst, 'writeVariable');
+    var ns = new state.State('write_'+inst.v+'_in_'+inst.x, 'writeVariable', inst);
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
     return ns;
@@ -68,7 +68,10 @@ function generateWriteVariable(inst, states, last_state) {
 
 
 function generateOperation(inst, states, last_state) {
-    var ns = new state.State(inst, 'operation');
+    var name;
+    if (inst.arity == 'unary') name = inst.x+'op';
+    else name = inst.x+'op'+inst.y;
+    var ns = new state.State(name, 'operation' , inst);
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
     return ns;
@@ -76,12 +79,12 @@ function generateOperation(inst, states, last_state) {
 
 function generateIf(inst, states, last_state) {
     //if start
-    var s_start_if = new state.State(inst,'ifstart');
+    var s_start_if = new state.State('if_start', 'ifstart',inst);
     if (last_state) s_start_if.parents.push(last_state);
     states.push(s_start_if);
 
     //if end
-    var s_end_if = new state.State(inst,'ifend');
+    var s_end_if = new state.State('if_end','ifend', inst);
     states.push(s_end_if);
 
     //consequente
@@ -116,7 +119,7 @@ function generateIf(inst, states, last_state) {
 
 function generateWhile(inst, states, last_state) {
     //if start
-    var s_while = new state.State(inst, 'while');
+    var s_while = new state.State('while', 'while', inst);
     if (last_state) s_while.parents.push(last_state);
     states.push(s_while);
 
@@ -138,7 +141,7 @@ function generateWhile(inst, states, last_state) {
 
 function generateFor(inst, states, last_state) {
     //if start
-    var s_for = new state.State(inst, 'for');
+    var s_for = new state.State('for', 'for', inst);
     if (last_state) s_for.parents.push(last_state);
     states.push(s_for);
 
@@ -193,20 +196,32 @@ function generateFor(inst, states, last_state) {
 function generateFunctionDeclaration(inst, states, last_state) {
     //console.log('generateFunctionDeclaration');
     //call declaration
-    var s_fun_decl = new state.State(inst,'functionDeclaration');
+    var s_fun_decl = new state.State('function_decl_'+inst.id , 'functionDeclaration' , inst);
     states.push(s_fun_decl);
     if (last_state) s_fun_decl.parents.push(last_state);
+
+
+    //generate body but do not link it to the other state
+    var fstates = generateStates(inst.body);
+    if (fstates.all.length > 0) {
+        for (var i = 0; i < fstates.all.length; i++) {
+            states.push(fstates.all[i]);
+        };
+    };
+    s_fun_decl.states_body = fstates;
+
     return s_fun_decl;
 };
 
 function generateCallExpression(inst, states, last_state) {
     //entry
-    var s_call_entry = new state.State(inst, 'callEntry');
+    var s_call_entry = new state.State( 'call_'+ inst.callee, 'callEntry' , inst);
+    s_call_entry.linked = [];
     states.push(s_call_entry);
     if (last_state) s_call_entry.parents.push(last_state);
 
     //exit
-    var s_call_exit = new state.State(inst, 'callExit');
+    var s_call_exit = new state.State('end_call_'+ inst.callee, 'callExit' , inst);
     states.push(s_call_exit);
     s_call_exit.parents.push(s_call_entry);
 

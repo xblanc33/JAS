@@ -4,12 +4,15 @@ var cfgb = require('./callBuilder.js');
 
 var abst = rJS.rewriteJS('simpleCode.js')
 var genStates = cfgb.build(abst);
-//console.log(abst);
+//console.log(genStates.all);
+
+var pr = require('./printGraph.js');
+pr.print(genStates.all);
 
 
-var lattice = require('./simpleIntegerLattice.js');
+// var lattice = require('./simpleIntegerLattice.js');
 
-var eng = require('./fixPointEngine.js');
-eng.init(genStates.all, lattice);
-eng.run(genStates.all);
-eng.printAllVariablesAtTheEnd(genStates.last);
+// var eng = require('./fixPointEngine.js');
+// eng.init(genStates.all, lattice);
+// eng.run(genStates.all);
+// eng.printAllVariablesAtTheEnd(genStates.last);

@@ -61,25 +61,30 @@ function f() {
   	a = 42;
 };
 
+
 function g() {
 	a = -43;
+	f();
 };
 
-function h() {
-	a = 4;
-};
-
-f();
-
-if (true) {
-	a = f;
-} else {
-	a = g;
-}
+g();
 
 
-b = a;
+// function h() {
+// 	a = 4;
+// };
 
-b();
+// f();
 
-(function() {})(a=50);
+// if (true) {
+// 	c = f;
+// } else {
+// 	c = g;
+// }
+
+
+// b = c;
+
+// b();
+
+//(function() {a=50})();

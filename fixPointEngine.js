@@ -1,6 +1,8 @@
+var st = require('./StackMap.js');
+
 function attachLatticeFunctions(states, lattice) {
     for (var i = 0; i < states.length; i++) {
-        states[i].map = {};
+        states[i].map = new st.StackMap();
         states[i].lattice = lattice.l;
         if (lattice.pre) lattice.pre(states[i]);
         switch (states[i].type) {

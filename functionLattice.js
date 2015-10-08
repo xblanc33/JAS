@@ -5,60 +5,50 @@ var l = new lat.PowerSetLattice([]);
 
 //x is the declared variable
 function variableDeclaration() {
-    return this.joinMap(this.inst.x, []);
+    var j = this.joinParentsMap();
+    var t = this.addKeyValue(this.inst.x, []);
+    return j && t;
 };
 
 
 //x is the readen variable. v is the new created variable that contains the value of x
 function readVariable() {
-    return (this.joinMap(this.inst.v, this.getParentValue(this.inst.x)));
+    var j= this.joinParentsMap();
+    var t = this.updateKeyValue(this.inst.v, this.getParentsValue(this.inst.x))
+    return j && t;
 };
 
 //x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
 function writeVariable() {
+    var j= this.joinParentsMap();
     if (this.inst.jstype == 'Literal') {
-        return this.joinMap(this.inst.x, []);
+        return j && this.updateKeyValue(this.inst.x, []);
     } else { //'Identifier'
-        var v_id = this.getParentValue(this.inst.v);
-        return this.joinMap(this.inst.x, v_id);
+        var v_id = this.getParentsValue(this.inst.v);
+        return j && this.updateKeyValue(this.inst.x, v_id);
     };
 };
 
-//returns the sign of a literal
-function operation() {
-    return this.joinMap();
-};
-
-function ifstart() {
-    return this.joinMap();
-};
-
-function ifend() {
-    return this.joinMap();
-};
-
-function whilebody() {
-    return this.joinMap();
-};
-
-function forbody() {
-    return this.joinMap();
-};
 
 function functionDeclaration() {
-    return (this.joinMap(this.inst.id, [this.inst.id]));
+    var j= this.joinParentsMap();
+    var t = this.addKeyValue(this.inst.id, [this.inst.id]);
+    return j && t;
 };
 
-function callEntry() {
-    return this.joinMap();
-};
+// function callEntry() {
+//     //create a new map for the scope
+//     //that new map should have all the parameters, the global variable
+//     return this.joinMap();
+// };
 
-function callExit() {
-    return this.joinMap();
-};
+// function callExit() {
+//     //delete the map for the scope
+//     return this.joinMap();
+// };
 
 function defaultState() {
-    return this.joinMap();
+    return this.joinParentsMap();
 };
 
 
@@ -80,13 +70,13 @@ module.exports.l = l;
 module.exports.variableDeclaration = variableDeclaration;
 module.exports.readVariable = readVariable;
 module.exports.writeVariable = writeVariable;
-module.exports.operation = operation;
-module.exports.ifstart = ifstart;
-module.exports.ifend = ifend;
-module.exports.whilebody = whilebody;
-module.exports.forbody = forbody;
+module.exports.operation = defaultState;
+module.exports.ifstart = defaultState;
+module.exports.ifend = defaultState;
+module.exports.whilebody = defaultState;
+module.exports.forbody = defaultState;
 module.exports.functionDeclaration = functionDeclaration;
-module.exports.callEntry = callEntry;
-module.exports.callExit = callExit;
+module.exports.callEntry = defaultState;
+module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;
 module.exports.pre = pre;

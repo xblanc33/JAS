@@ -8,23 +8,28 @@ l.enforceAll();
 
 //x is the declared variable
 function variableDeclaration() {
-    return this.joinMap(this.inst.x, 'B');
+    var j = this.joinParentsMap();
+    var t = this.addKeyValue(this.inst.x, 'B');
+    return j && t;
 };
 
 
 //x is the readen variable. v is the new created variable that contains the value of x
 function readVariable() {
-    return (this.joinMap(this.inst.v, this.getParentValue(this.inst.x)));
+    var j = this.joinParentsMap();
+    var t = this.addKeyValue(this.inst.v, this.getParentsValue(this.inst.x));
+    return j && t;
 };
 
 //x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
 function writeVariable() {
+    var j = this.joinParentsMap();
     if (this.inst.jstype == 'Literal') {
         var val = signOfLiteral(this.inst.v);
-        return this.joinMap(this.inst.x, val);
+        return j && this.updateKeyValue(this.inst.x, val);
     } else { //'Identifier'
-        var v_id = this.getParentValue(this.inst.v);
-        return this.joinMap(this.inst.x, v_id);
+        var v_id = this.getParentsValue(this.inst.v);
+        return j && this.updateKeyValue(this.inst.x, v_id);
     }
 };
 
@@ -41,23 +46,24 @@ function signOfLiteral(lit) {
 
 //returns the sign of a literal
 function operation() {
+    var j = this.joinParentsMap();
     if (this.inst.arity == 'unary') {
         if (this.inst.xjstype == 'Literal') {
             var val = signOfLiteral(this.inst.x);
-            return this.joinMap(this.inst.r, elementUnaryExpression(val, this.inst.operator));
+            return j && this.updateKeyValue(this.inst.r, elementUnaryExpression(val, this.inst.operator));
         } else { //'Identifier'
-            var v_id = this.getParentValue(this.inst.x);
-            return this.joinMap(this.inst.r, v_id);
+            var v_id = this.getParentsValue(this.inst.x);
+            return j && this.updateKeyValue(this.inst.r, v_id);
         }
     } else { //'binary'
         var l, r;
         if (this.inst.xjstype == 'Literal') {
             l = signOfLiteral(this.inst.x);
-        } else l = this.getParentValue(this.inst.x);
+        } else l = this.getParentsValue(this.inst.x);
         if (this.inst.yjstype == 'Literal') {
             r = signOfLiteral(this.inst.y);
-        } else r = this.getParentValue(this.inst.y);
-        return this.joinMap(this.inst.r, elementBinaryExpression(l, r, this.inst.operator));
+        } else r = this.getParentsValue(this.inst.y);
+        return j && this.updateKeyValue(this.inst.r, elementBinaryExpression(l, r, this.inst.operator));
     };
 };
 
@@ -109,7 +115,7 @@ function signPower(l, r) {
 
 
 function defaultState() {
-    return this.joinMap();
+    return this.joinParentsMap();
 };
 
 module.exports.l = l;

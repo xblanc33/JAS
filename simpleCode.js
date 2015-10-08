@@ -55,19 +55,23 @@
 // for (i = 0 ; i < 5 ; i++) {
 // 	i =5;
 // };
-var a;
+//var a;
+//var b;
 
 function f() {
-  	a = 42;
+  	a = -42;
+  	if (true) g();
+  	else a=20;
 };
 
 
 function g() {
-	a = -43;
-	f();
+	a = 43;
+	if (true) g();
+	else a = -55;
 };
 
-g();
+f();
 
 
 // function h() {
@@ -87,4 +91,6 @@ g();
 
 // b();
 
-//(function() {a=50})();
+(function() {a=50})();
+
+g();

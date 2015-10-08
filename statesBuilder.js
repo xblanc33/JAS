@@ -1,4 +1,4 @@
-var state = require('./state.js');
+var state = require('./State.js');
 
 
 //input an abstraction and return an array of states with established links (not a real CFG)

@@ -122,7 +122,14 @@ function signPower(l, r) {
 };
 
 
-
+//x is the declared variable
+function functionDeclaration() {
+    var old = this.getValue(this.inst.id);
+    this.joinParentsMap();
+    this.addKeyValue(this.inst.id, 'B');
+    var ne = this.getValue(this.inst.id);
+    return (typeof old === 'undefined') || (ne != old);
+};
 
 function defaultState() {
     return this.joinParentsMap();
@@ -140,4 +147,4 @@ module.exports.forbody = defaultState;
 module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;
-module.exports.functionDeclaration = defaultState;
+module.exports.functionDeclaration = functionDeclaration;

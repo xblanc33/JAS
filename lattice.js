@@ -195,10 +195,12 @@ function Lattice(s_elements) {
     this.getElementAllUppers = function(x) {
         var allUppers = [];
         var x_index = this.elements.indexOf(x);
-        for (var i = 0; i < this.orders[x_index].length; i++) {
-            if (this.orders[x_index][i] === -1) allUppers.push(this.elements[i]);
-        };
-        return allUppers;
+        if (x_index != -1) {
+            for (var i = 0; i < this.orders[x_index].length; i++) {
+                if (this.orders[x_index][i] === -1) allUppers.push(this.elements[i]);
+            };
+            return allUppers;
+        } else return [this.getBottom()];
     };
 
     //return all elements that are upper of all elements in s

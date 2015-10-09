@@ -9,7 +9,7 @@ function StackMap(parent) {
     this.put = function(k, v) {
         if (!this.containsKey(k)) {
             this.map.put(k, v);
-            return true;
+            return true; //something has changed
         } else {
             if (this.map.containsKey(k)) return this.putTop(k, v);
             else return this.parent_map.put(k, v);

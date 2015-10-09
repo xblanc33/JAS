@@ -6,7 +6,10 @@ function Map() {
         if (this.keys.lastIndexOf(k) === -1) {
             this.keys.push(k);
         };
-        this.values[k] = v;
+        if (this.values[k] != v) {
+            this.values[k] = v;
+            return true; //someting has changed
+        } else return false; //nothing has changed
     };
 
     this.get = function(k) {
@@ -45,7 +48,7 @@ function Map() {
                 s.push(this.get(m.keys[i]));
                 s.push(m.get(m.keys[i]));
                 var nv = l.getLeastUpper(s);
-                if (nv != this.get(m.keys[i])) {
+                if (!l.equality(nv, this.get(m.keys[i]))) {
                     this.put(m.keys[i], nv);
                     changed = true;
                 };
@@ -55,6 +58,7 @@ function Map() {
                 changer = true;
             };
         };
+        return changed;
     };
 };
 

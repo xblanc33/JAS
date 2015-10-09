@@ -9,6 +9,7 @@
   "dependencies": {
     "esprima": "^2.5.0",
     "estraverse": "^4.1.0",
+    "node-inspector": "^0.12.3",
     "slimerjs": "^0.9.6"
   },
   "devDependencies": {},

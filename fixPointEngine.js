@@ -2,7 +2,7 @@ var st = require('./StackMap.js');
 
 function attachLatticeFunctions(states, lattice) {
     for (var i = 0; i < states.length; i++) {
-        states[i].map = new st.StackMap();
+        states[i].smap = new st.StackMap();
         states[i].lattice = lattice.l;
         if (lattice.pre) lattice.pre(states[i]);
         switch (states[i].type) {
@@ -48,7 +48,7 @@ function attachLatticeFunctions(states, lattice) {
 
 function clean(states) {
     for (var i = 0; i < states.length; i++) {
-        states[i].map = {};
+        states[i].smap = {};
         states[i].f = undefined;
     };
 };
@@ -85,9 +85,9 @@ function printVariablesAtTheEnd(lastState) {
 
     //console.log(lastState.id);
 
-    for (v in lastState.map) {
+    for (v in lastState.getVariables()) {
         if (v.lastIndexOf('__v_') == -1) {
-            console.log('Variable ' + v + ' = ' + lastState.map[v]);
+            console.log('Variable ' + v + ' = ' + lastState.getValue(v));
         };
     };
 };
@@ -96,9 +96,10 @@ function printVariablesAtTheEnd(lastState) {
 function printAllVariablesAtTheEnd(lastState) {
 
     //console.log(lastState.id);
+    var variables = lastState.getVariables();
 
-    for (v in lastState.map) {
-        console.log('Variable ' + v + ' = ' + lastState.map[v]);
+    for (var i = 0; i < variables.length; i++) {
+        console.log('Variable ' + variables[i] + ' = ' + lastState.getValue(variables[i]));
     };
 };
 

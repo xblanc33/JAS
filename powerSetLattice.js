@@ -17,7 +17,7 @@ function PowerSetLattice() {
     this.size = this.keys.length;
 
     //add a new element
-    this.addElement = function(k , v) {
+    this.addElement = function(k, v) {
         //console.log('k:'+k);
         //console.log('v:'+v);
         if (this.keys.indexOf(k) === -1) {
@@ -50,24 +50,22 @@ function PowerSetLattice() {
         return set.toSet(union);
     };
 
-    this.equality = function(e1, e2) {      
-        // console.log('equality');
-        // console.log(e1);
-        // console.log(e2); 
-        for (var i = 0; i < e1.length; i++) {
-            if (e2.lastIndexOf(e1[i]) === -1) {
-                // console.log('false');
-                return false;
+    this.equality = function(e1, e2) {
+        if (e1 instanceof Array && e2 instanceof Array) {
+            for (var i = 0; i < e1.length; i++) {
+                if (e2.lastIndexOf(e1[i]) === -1) {
+                    return false;
+                };
             };
-        };
-        for (var i = 0; i < e2.length; i++) {
-            if (e1.lastIndexOf(e2[i]) === -1) {
-                // console.log('false');
-                return false;
+            for (var i = 0; i < e2.length; i++) {
+                if (e1.lastIndexOf(e2[i]) === -1) {
+                    return false;
+                };
             };
+            return true;
+        } else {
+            return e1 === e2;
         };
-        // console.log('true');
-        return true;
-    }
+    };
 
 };

@@ -5,10 +5,10 @@
 // b = 60;
 // b = a;
 // a = a + b;
-// //b = a - b;
+// b = a - b;
 // a = (a + b) + 44  + 50; // -42;
 // b = c;
-// // c = a;
+// c = a;
 
 // if (true) {
 // 	a = 42;
@@ -55,8 +55,6 @@
 // for (i = 0 ; i < 5 ; i++) {
 // 	i =5;
 // };
-//var a;
-//var b;
 
 function f() {
   	a = -42;
@@ -71,25 +69,26 @@ function g() {
 	else a = -55;
 };
 
+
 f();
 
 
-// function h() {
-// 	a = 4;
-// };
+function h() {
+	a = 4;
+};
 
-// f();
+f();
 
-// if (true) {
-// 	c = f;
-// } else {
-// 	c = g;
-// }
+if (true) {
+	c = f;
+} else {
+	c = g;
+}
 
 
-// b = c;
+b = c;
 
-// b();
+b();
 
 (function() {a=50})();
 

@@ -1,8 +1,5 @@
-var st = require('./StackMap.js');
-
 function attachLatticeFunctions(states, lattice) {
     for (var i = 0; i < states.length; i++) {
-        states[i].smap = new st.StackMap();
         states[i].lattice = lattice.l;
         if (lattice.pre) lattice.pre(states[i]);
         switch (states[i].type) {
@@ -33,13 +30,16 @@ function attachLatticeFunctions(states, lattice) {
             case 'functionDeclaration':
                 states[i].f = lattice.functionDeclaration;
                 break;
+            case 'functionExpression':
+                states[i].f = lattice.functionExpression;
+                break;
             case 'callEntry':
                 states[i].f = lattice.callEntry;
                 break;
             case 'callExit':
                 states[i].f = lattice.callExit;
                 break;
-            default : 
+            default:
                 states[i].f = lattice.defaultState;
                 break;
         };
@@ -48,7 +48,7 @@ function attachLatticeFunctions(states, lattice) {
 
 function clean(states) {
     for (var i = 0; i < states.length; i++) {
-        states[i].smap = {};
+        states[i].smap.clean();
         states[i].f = undefined;
     };
 };

@@ -46,6 +46,14 @@ function functionDeclaration() {
     return !l.equality(old, ne);
 };
 
+function functionExpression() {
+    var old = this.getValue(this.inst.id);
+    this.joinParentsMap();
+    this.addKeyValue(this.inst.id, [this.inst.id]);
+    var ne = this.getValue(this.inst.id);
+    return !l.equality(old, ne);
+};
+
 // function callEntry() {
 //     //create a new map for the scope
 //     //that new map should have all the parameters, the global variable
@@ -65,7 +73,7 @@ function defaultState() {
 
 function pre(state) {
     //console.log('pre');
-    if (state.type == 'functionDeclaration') {
+    if (state.type == 'functionDeclaration' || state.type == 'functionExpression' ) {
         //console.log('functionDeclaration');
         if (state.inst.id) {
             //console.log('addElement');
@@ -86,6 +94,7 @@ module.exports.ifend = defaultState;
 module.exports.whilebody = defaultState;
 module.exports.forbody = defaultState;
 module.exports.functionDeclaration = functionDeclaration;
+module.exports.functionExpression = functionExpression;
 module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;

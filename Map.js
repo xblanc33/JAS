@@ -60,6 +60,12 @@ function Map() {
         };
         return changed;
     };
+
+    //clean all the keys / values
+    this.clean = function() {
+        this.keys = [];
+        this.values = {};
+    };
 };
 
 module.exports = Map;

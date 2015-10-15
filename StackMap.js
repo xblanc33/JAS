@@ -71,6 +71,12 @@ function StackMap(parent) {
         };
         return changed;
     };
+
+    //clean all keys / values
+    this.clean = function() {
+        this.map.clean();
+        if (parent) this.parent_map.clean();
+    };
 };
 
 

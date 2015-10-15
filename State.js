@@ -2,18 +2,18 @@ module.exports.State = State;
 
 var sid = 0;
 
-function State(name, type, inst) {
+function State(name, type, inst, smap) {
     this.parents = []; //set of parent node
     this.name = name;
     this.inst = inst;
     this.type = type;
+    this.smap = smap;
 
     this.sid = 's' + sid;
     sid++;
 
     //these properties are attached by the engine according to the goal of the analysis
     this.lattice;
-    this.smap;
 
     //this function will also be attached by the engine according to the type
     this.f;

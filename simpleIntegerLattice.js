@@ -148,3 +148,4 @@ module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;
 module.exports.functionDeclaration = functionDeclaration;
+module.exports.functionExpression = functionDeclaration;

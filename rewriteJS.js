@@ -284,14 +284,14 @@ function visitExpressionStatement(node, abst) {
             };
             abst.instructions.push(write);
             break;
-        case 'CallExpression' :
+        case 'CallExpression':
             var call = {};
             call.type = 'call-expression';
-            switch (node.expression.callee.type)  {
-                case 'Identifier' : 
+            switch (node.expression.callee.type) {
+                case 'Identifier':
                     call.callee = node.expression.callee.name;
                     break;
-                case 'FunctionExpression' : 
+                case 'FunctionExpression':
                     visitFunctionExpression(node.expression.callee, abst);
                     call.callee = abst.instructions[abst.instructions.length - 1].id;
                     break;
@@ -508,12 +508,8 @@ function visitFunctionDeclaration(node, abst) {
     fun.type = 'function-declaration';
     fun.body = {};
     fun.body.instructions = [];
-    if (node.id) {
-        fun.id = node.id.name;
-    } else {
-        fun.id = '__f_'+tmp_var_id;
-        tmp_var_id++;
-    }
+    fun.id = node.id.name;
+
     if (node.body.type === 'BlockStatement') {
         for (var i = 0; i < node.body.body.length; i++) {
             visitNode(node.body.body[i], fun.body);
@@ -523,5 +519,18 @@ function visitFunctionDeclaration(node, abst) {
 };
 
 function visitFunctionExpression(node, abst) {
-    visitFunctionDeclaration(node, abst);
+    var fun = {};
+    fun.type = 'function-expression';
+    fun.body = {};
+    fun.body.instructions = [];
+
+    fun.id = '__f_' + tmp_var_id;
+    tmp_var_id++;
+
+    if (node.body.type === 'BlockStatement') {
+        for (var i = 0; i < node.body.body.length; i++) {
+            visitNode(node.body.body[i], fun.body);
+        };
+    } else visitNode(node.body, fun.body);
+    abst.instructions.push(fun);
 }

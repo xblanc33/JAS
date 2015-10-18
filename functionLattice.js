@@ -5,10 +5,10 @@ var l = new lat.PowerSetLattice([]);
 
 //x is the declared variable
 function variableDeclaration() {
-    var old = this.getValue(this.inst.x);
+    var old = this.getVariableValue(this.inst.x);
     this.joinParentsMap();
-    this.addKeyValue(this.inst.x, []);
-    var ne = this.getValue(this.inst.x);
+    this.addVariableValueInLocalScope(this.inst.x, []);
+    var ne = this.getVariableValue(this.inst.x);
     var changed = l.equality(old, ne);
     return !changed;
 };
@@ -16,41 +16,41 @@ function variableDeclaration() {
 
 //x is the readen variable. v is the new created variable that contains the value of x
 function readVariable() {
-    var old = this.getValue(this.inst.v);
+    var old = this.getVariableValue(this.inst.v);
     this.joinParentsMap();
-    this.updateKeyValue(this.inst.v, this.getParentsValue(this.inst.x))
-    var ne = this.getValue(this.inst.v);
+    this.updateVariableValue(this.inst.v, this.getParentsVariableValue(this.inst.x))
+    var ne = this.getVariableValue(this.inst.v);
     return !l.equality(old, ne);
 };
 
 //x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
 function writeVariable() {
-    var old = this.getValue(this.inst.x);
+    var old = this.getVariableValue(this.inst.x);
     this.joinParentsMap();
     if (this.inst.jstype == 'Literal') {
-        this.updateKeyValue(this.inst.x, []);
+        this.updateVariableValue(this.inst.x, []);
     } else { //'Identifier'
-        var v_id = this.getParentsValue(this.inst.v);
-        this.updateKeyValue(this.inst.x, v_id);
+        var v_id = this.getParentsVariableValue(this.inst.v);
+        this.updateVariableValue(this.inst.x, v_id);
     };
-    var ne = this.getValue(this.inst.x);
+    var ne = this.getVariableValue(this.inst.x);
     return !l.equality(old, ne);
 };
 
 
 function functionDeclaration() {
-    var old = this.getValue(this.inst.id);
+    var old = this.getVariableValue(this.inst.id);
     this.joinParentsMap();
-    this.addKeyValue(this.inst.id, [this.inst.id]);
-    var ne = this.getValue(this.inst.id);
+    this.addVariableValueInLocalScope(this.inst.id, [this.inst.id]);
+    var ne = this.getVariableValue(this.inst.id);
     return !l.equality(old, ne);
 };
 
 function functionExpression() {
-    var old = this.getValue(this.inst.id);
+    var old = this.getVariableValue(this.inst.id);
     this.joinParentsMap();
-    this.addKeyValue(this.inst.id, [this.inst.id]);
-    var ne = this.getValue(this.inst.id);
+    this.addVariableValueInLocalScope(this.inst.id, [this.inst.id]);
+    var ne = this.getVariableValue(this.inst.id);
     return !l.equality(old, ne);
 };
 

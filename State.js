@@ -39,33 +39,33 @@ function State(name, type, inst, smap) {
 
     };
 
-    this.updateKeyValue = function(k, v) {
+    this.updateVariableValue = function(k, v) {
         // console.log('updateKeyValue');
         // console.log(k);
         // console.log(v);
         return this.smap.put(k, v);
     };
 
-    this.addKeyValue = function(k, v) {
+    this.addVariableValueInLocalScope = function(k, v) {
         // console.log('addKeyValue');
         // console.log(this.sid);
-        return this.smap.putTop(k, v);
+        return this.smap.putLocal(k, v);
     };
 
     //get the value of k only from parent nodes
-    this.getParentsValue = function(k) {
+    this.getParentsVariableValue = function(k) {
         // console.log('getParentValue:' + k);
         var parents_v = [];
         for (var i = 0; i < this.parents.length; i++) {
             if (this.parents[i].smap.containsKey(k))
-                parents_v.push(this.parents[i].getValue(k));
+                parents_v.push(this.parents[i].getVariableValue(k));
         };
         if (parents_v.length === 0) return this.lattice.getBottom();
         else return this.lattice.getLeastUpper(parents_v);
     };
 
     //get the value after a join and after F
-    this.getValue = function(k) {
+    this.getVariableValue = function(k) {
         return this.smap.get(k);
     };
 

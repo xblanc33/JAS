@@ -87,7 +87,7 @@ function printVariablesAtTheEnd(lastState) {
 
     for (v in lastState.getVariables()) {
         if (v.lastIndexOf('__v_') == -1) {
-            console.log('Variable ' + v + ' = ' + lastState.getValue(v));
+            console.log('Variable ' + v + ' = ' + lastState.getVariableValue(v));
         };
     };
 };
@@ -99,7 +99,7 @@ function printAllVariablesAtTheEnd(lastState) {
     var variables = lastState.getVariables();
 
     for (var i = 0; i < variables.length; i++) {
-        console.log('Variable ' + variables[i] + ' = ' + lastState.getValue(variables[i]));
+        console.log('Variable ' + variables[i] + ' = ' + lastState.getVariableValue(variables[i]));
     };
 };
 

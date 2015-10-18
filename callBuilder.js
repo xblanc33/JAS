@@ -34,7 +34,7 @@ function linkCalls(states, lattice) {
         if (states[i].type == 'callEntry') {
             var callee = states[i].inst.callee; //id of the callee function
 
-            var callees = states[i].getValue(callee);
+            var callees = states[i].getVariableValue(callee);
             if (typeof callees !== "undefined")  { //if the state has a value for callee
                 if (callees.length > 0) { //if that value is not empty
                      // the values for callee

@@ -6,10 +6,11 @@ function ScopeMap(parent) {
     if (parent) this.parent_scope = parent;
     else this.parent_scope = undefined;
 
-    // change the value of a variable or add it in the globle scope (upper parent)
+    // change the value of a variable if it exists 
     this.put = function(k, v) {
         if (!this.containsKey(k)) {
-            return this.putLocal(k, v);
+            //return this.putLocal(k, v);
+            return false;//don't add, so nothing change
         } else {
             if (this.local_scope.containsKey(k)) return this.putLocal(k, v);
             else {
@@ -97,8 +98,8 @@ function ScopeMap(parent) {
 
     //clean all keys / values
     this.clean = function() {
-        this.map.clean();
-        if (parent) this.parent_map.clean();
+        this.local_scope.clean();
+        if (typeof this.parent_scope !== "undefined") this.parent_scope.clean();
     };
 
     //return the deep of the scope hierarchie

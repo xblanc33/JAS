@@ -1,5 +1,5 @@
 var state = require('./State.js');
-var map = require('./StackMap.js');
+var map = require('./ScopeMap.js');
 
 
 //input an abstraction and return an array of states with established links (not a real CFG)
@@ -7,7 +7,7 @@ function generateStates(abst, original_map) {
     //the array that contains the states
     var states = [];
     var last_state;
-    if (!original_map) original_map = new map.StackMap();
+    if (!original_map) original_map = new map.ScopeMap();
 
     for (var i = 0; i < abst.instructions.length; i++) {
         var gen = generateDeclarationState(abst.instructions[i], states, last_state, original_map);
@@ -219,7 +219,7 @@ function generateFunctionDeclaration(inst, states, last_state, original_map) {
 
 
     //generate body but do not link it to the other state
-    var scope_map = new map.StackMap(original_map.clone());
+    var scope_map = new map.ScopeMap(original_map.clone());
     var fstates = generateStates(inst.body, scope_map);
     if (fstates.all.length > 0) {
         for (var i = 0; i < fstates.all.length; i++) {
@@ -240,7 +240,7 @@ function generateFunctionExpression(inst, states, last_state, original_map) {
 
 
     //generate body but do not link it to the other state
-    var scope_map = new map.StackMap(original_map.clone());
+    var scope_map = new map.ScopeMap(original_map.clone());
     var fstates = generateStates(inst.body, scope_map);
     if (fstates.all.length > 0) {
         for (var i = 0; i < fstates.all.length; i++) {

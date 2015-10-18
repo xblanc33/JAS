@@ -1,12 +1,18 @@
 var a;
 
-a = -1;
+// a = -1;
 
 f();
+
 
 //f = function() {
 function f() {
-    a = 1;
+    if (true) f();
+    else a=5;
 };
 
-f();
+// function g() {
+// 	a = -5;
+// }
+
+// f();

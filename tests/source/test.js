@@ -12,7 +12,7 @@ function f() {
 };
 
 f = function () {
-	console.log("f expression");
+		console.log("f expression");
 	a--;
 };
 

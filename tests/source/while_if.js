@@ -1,3 +1,6 @@
+var a;
+var b;
+var c;
 while (true) {
     a = b;
     if (a == 3) {

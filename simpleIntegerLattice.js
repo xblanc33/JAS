@@ -37,7 +37,10 @@ function writeVariable() {
         var t = this.updateVariableValue(this.inst.x, v_id);
     }
     var ne = this.getVariableValue(this.inst.x);
-    return (typeof old === 'undefined') || (ne != old);
+    if (typeof old === 'undefined') {
+        if (typeof ne === 'undefined') return false;
+        else return true;
+    } else return (ne != old);
 };
 
 

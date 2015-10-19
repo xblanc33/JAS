@@ -18,7 +18,7 @@ function variableDeclaration() {
 function readVariable() {
     var old = this.getVariableValue(this.inst.v);
     this.joinParentsMap();
-    this.updateVariableValue(this.inst.v, this.getParentsVariableValue(this.inst.x))
+    this.addVariableValueInLocalScope(this.inst.v, this.getParentsVariableValue(this.inst.x))
     var ne = this.getVariableValue(this.inst.v);
     return !l.equality(old, ne);
 };

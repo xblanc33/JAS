@@ -55,7 +55,7 @@ function Map() {
 
             } else { //just add
                 this.put(m.keys[i], m.get(m.keys[i]));
-                changer = true;
+                changed = true;
             };
         };
         return changed;

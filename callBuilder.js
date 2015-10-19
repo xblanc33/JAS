@@ -61,6 +61,7 @@ function build(abst) {
     //console.log(genStates.all);
     lattice.l.keys = [];
     lattice.l.values = {};
+    
     eng.init(genStates.all, lattice);
     var linkAgain = true;
     while (linkAgain) {

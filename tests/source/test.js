@@ -1,5 +1,4 @@
 var a = 0;
-var f;
 
 //calling f here is not possible since f is a variable and is now undefined
 f();
@@ -7,16 +6,16 @@ f();
 
 //f = function() {
 function f() {
-	console.log("f declare");
-    a++;
+	//console.log("f declare");
+    a = 5;
 };
 
 f = function () {
-		console.log("f expression");
-	a--;
+		//console.log("f expression");
+	a = 6;
 };
 
 //calling f here is possible since f is a variable and its value is a function
 f();
 
-console.log(a);
+//console.log(a);

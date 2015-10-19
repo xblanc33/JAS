@@ -70,7 +70,6 @@ function defaultState() {
 };
 
 
-
 function pre(state) {
     //console.log('pre');
     if (state.type == 'functionDeclaration' || state.type == 'functionExpression' ) {

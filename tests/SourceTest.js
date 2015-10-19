@@ -23,8 +23,10 @@ for (var i = 0; i < files.length; i++) {
     console.log(files[i]);
 
     debugger;
-    var abst = rJS.rewriteJS(dirpath+files[i])
-    var genStates = cfgb.build(abst);
+    var abst = undefined;
+    abst = rJS.rewriteJS(dirpath+files[i])
+    var genStates = undefined;
+    genStates = cfgb.build(abst);
     //console.log(genStates.all);
 
     

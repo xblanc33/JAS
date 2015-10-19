@@ -1,7 +1,7 @@
 var a;
 
 function f() {
-	a++;
+	a=5;
 };
 
 function g() {
@@ -10,5 +10,3 @@ function g() {
 };
 
 g();
-
-console.log(a);

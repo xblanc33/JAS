@@ -78,8 +78,8 @@ function operation() {
 };
 
 function elementUnaryExpression(v, op) {
-	//console.log('unary'+v+op);
-	if (v=== '+' && op === '+') return '+';
+    //console.log('unary'+v+op);
+    if (v === '+' && op === '+') return '+';
     if (v === '-' && op === '-') return '+';
     if (v === '-' && op === '+') return '-';
     if (v === '+' && op === '-') return '-';
@@ -121,6 +121,21 @@ function signPower(l, r) {
     else return '-';
 };
 
+function functionDeclaration() {
+    var old = this.getVariableValue(this.inst.id);
+    this.joinParentsMap();
+    this.addVariableValueInLocalScope(this.inst.id, 'B');
+    var ne = this.getVariableValue(this.inst.id);
+    return (typeof old === 'undefined') || (ne != old);
+};
+
+function functionExpression() {
+    var old = this.getVariableValue(this.inst.id);
+    this.joinParentsMap();
+    this.addVariableValueInLocalScope(this.inst.id, 'B');
+    var ne = this.getVariableValue(this.inst.id);
+    return (typeof old === 'undefined') || (ne != old);
+};
 
 function defaultState() {
     return this.joinParentsMap();
@@ -138,5 +153,5 @@ module.exports.forbody = defaultState;
 module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;
-module.exports.functionDeclaration = defaultState;
-module.exports.functionExpression = defaultState;
+module.exports.functionDeclaration = functionDeclaration;
+module.exports.functionExpression = functionExpression;

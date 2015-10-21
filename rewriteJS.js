@@ -126,6 +126,59 @@ function visitVariableInit(node, abst) {
 };
 
 
+function visitArgument(node, abst) {
+    var arg_v;
+    switch (node.type) {
+        case 'Literal': //create a new variable for the argument
+            //create a new variable for the argument
+            var write = {};
+            write.type = 'write-variable';
+            write.x = '__v_' + tmp_var_id;
+            tmp_var_id++;
+            write.v = node.value;
+            write.jstype = 'Literal';
+            arg_v = write.x;
+            abst.instructions.push(write);
+            break;
+        case 'Identifier': //nothing to do
+            arg_v = node.name;
+            break;
+        case 'BinaryExpression': //create a new variable for the argument
+            //create a new variable for the argument
+            var write = {};
+            write.type = 'write-variable';
+            write.x = '__v_' + tmp_var_id;
+            tmp_var_id++;
+            visitBinaryExpression(node, abst);
+            write.v = abst.instructions[abst.instructions.length - 1].r;
+            write.jstype = 'Identifier';
+            arg_v = write.x;
+            abst.instructions.push(write);
+            break;
+        case 'UnaryExpression':
+            //create a new variable for the argument
+            var write = {};
+            write.type = 'write-variable';
+            write.x = '__v_' + tmp_var_id;
+            tmp_var_id++;
+            visitUnaryExpression(node, abst);
+            write.v = abst.instructions[abst.instructions.length - 1].r;
+            write.jstype = 'Identifier';
+            arg_v = write.x;
+            abst.instructions.push(write);
+            break;
+        case 'FunctionExpression':
+            visitFunctionExpression(node, abst);
+            arg_v = abst.instructions[abst.instructions.length - 1].id;
+            break;
+        default:
+            break;
+
+    };
+    return arg_v;
+};
+
+
 
 function visitBinaryExpression(node, abst) {
     var op = {};
@@ -295,7 +348,12 @@ function visitExpressionStatement(node, abst) {
                     visitFunctionExpression(node.expression.callee, abst);
                     call.callee = abst.instructions[abst.instructions.length - 1].id;
                     break;
-
+            };
+            if (node.expression.arguments) {
+                call.args = [];
+                for (var i = 0; i < node.expression.arguments.length; i++) {
+                    call.args.push(visitArgument(node.expression.arguments[i], abst));
+                };
             };
             abst.instructions.push(call);
             break;
@@ -510,6 +568,18 @@ function visitFunctionDeclaration(node, abst) {
     fun.body.instructions = [];
     fun.id = node.id.name;
 
+
+    //params
+    fun.params = [];
+    if (node.params) {
+        for (var i = 0; i < node.params.length; i++) {
+            var type = node.params[i].type;
+            var iden = node.params[i].name;
+            if (type === 'Identifier') fun.params.push(iden);
+        };
+    }
+
+    //body
     if (node.body.type === 'BlockStatement') {
         for (var i = 0; i < node.body.body.length; i++) {
             visitNode(node.body.body[i], fun.body);
@@ -526,6 +596,17 @@ function visitFunctionExpression(node, abst) {
 
     fun.id = '__f_' + tmp_var_id;
     tmp_var_id++;
+
+
+    //params
+    fun.params = [];
+    if (node.params) {
+        for (var i = 0; i < node.params.length; i++) {
+            var type = node.params[i].type;
+            var iden = node.params[i].name;
+            if (type === 'Identifier') fun.params.push(iden);
+        };
+    }
 
     if (node.body.type === 'BlockStatement') {
         for (var i = 0; i < node.body.body.length; i++) {

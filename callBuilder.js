@@ -2,10 +2,28 @@ var sb = require('./statesBuilder.js');
 var lattice = require('./functionLattice.js');
 var eng = require('./fixPointEngine.js');
 
+function linkParameter(callee, num, variable) {
+    for (var i = 0; i < callee.states_body.all.length; i++) {
+        var state = callee.states_body.all[i]
+        if (state.type === 'parameterDeclaration') {
+            if (state.inst.id === num) {
+                state.values.push(variable);
+            };
+        };
+    };
+};
+
+function linkParameters(states, state_caller, state_callee) {
+    for (var i = 0; i < state_caller.inst.args.length; i++) {
+        linkParameter(state_callee, i, state_caller.inst.args[i]);
+    };
+};
+
 function linkCall(states, state_caller, state_callee) {
 
     if (state_callee.states_body.all.length > 0) {
         state_callee.states_body.first.parents.push(state_caller);
+        linkParameters(states, state_caller, state_callee);
         state_caller.exit.parents.push(state_callee.states_body.last);
     };
 };

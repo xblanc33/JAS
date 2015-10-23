@@ -132,6 +132,14 @@ function functionDeclaration() {
     return (typeof old === 'undefined') || (ne != old);
 };
 
+function parameterDeclaration() {
+    var old = this.getVariableValue(this.inst);
+    this.joinParentsMap();
+    this.addVariableValueInLocalScope(this.inst, 'B');
+    var ne = this.getVariableValue(this.inst);
+    return (typeof old === 'undefined') || (ne != old);
+};
+
 function functionExpression() {
     var old = this.getVariableValue(this.inst.id);
     this.joinParentsMap();
@@ -157,4 +165,5 @@ module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;
 module.exports.defaultState = defaultState;
 module.exports.functionDeclaration = functionDeclaration;
+module.exports.parameterDeclaration = parameterDeclaration;
 module.exports.functionExpression = functionExpression;

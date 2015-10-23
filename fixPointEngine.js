@@ -30,6 +30,9 @@ function attachLatticeFunctions(states, lattice) {
             case 'functionDeclaration':
                 states[i].f = lattice.functionDeclaration;
                 break;
+            case 'parameterDeclaration':
+                states[i].f = lattice.parameterDeclaration;
+                break;
             case 'functionExpression':
                 states[i].f = lattice.functionExpression;
                 break;

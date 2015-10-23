@@ -1,5 +1,7 @@
-function f(a) {
-	a();
+var b;
+function f(a , b) {
+	if (true) a();
+	else b();
 };
 
-f(function(){ var b; b=5;});
+f(function(){ b=5;} , function() {b=-5});

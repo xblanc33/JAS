@@ -46,6 +46,16 @@ function functionDeclaration() {
     return !l.equality(old, ne);
 };
 
+
+function parameterDeclaration() {
+    var old = this.getVariableValue(this.inst.name);
+    this.joinParentsMap();
+    this.addVariableValueInLocalScope(this.inst.name, this.values);
+    var ne = this.getVariableValue(this.inst.name);
+    var changed = l.equality(old, ne);
+    return !changed;
+};
+
 function functionExpression() {
     var old = this.getVariableValue(this.inst.id);
     this.joinParentsMap();
@@ -72,7 +82,7 @@ function defaultState() {
 
 function pre(state) {
     //console.log('pre');
-    if (state.type == 'functionDeclaration' || state.type == 'functionExpression' ) {
+    if (state.type == 'functionDeclaration' || state.type == 'functionExpression') {
         //console.log('functionDeclaration');
         if (state.inst.id) {
             //console.log('addElement');
@@ -93,6 +103,7 @@ module.exports.ifend = defaultState;
 module.exports.whilebody = defaultState;
 module.exports.forbody = defaultState;
 module.exports.functionDeclaration = functionDeclaration;
+module.exports.parameterDeclaration = parameterDeclaration;
 module.exports.functionExpression = functionExpression;
 module.exports.callEntry = defaultState;
 module.exports.callExit = defaultState;

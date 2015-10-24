@@ -237,7 +237,7 @@ function generateFunctionDeclaration(inst, states, last_state, original_map) {
         states.push(s_param_decl);
         fstates.all.push(s_param_decl);
     };
-    fstates.first.parents.push(s_param_decl);
+    if (s_param_decl) fstates.first.parents.push(s_param_decl);
     if (s_param_decl_first) fstates.first = s_param_decl_first;
     s_fun_decl.states_body = fstates;
 

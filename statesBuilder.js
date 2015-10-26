@@ -252,7 +252,7 @@ function generateFunctionExpression(inst, states, last_state, original_map) {
     if (last_state) s_fun_decl.parents.push(last_state);
 
 
-    //generate body but do not link it to the other state
+    //generate body
     var scope_map = new map.ScopeMap(original_map.clone());
     var fstates = generateStates(inst.body, scope_map);
     if (fstates.all.length > 0) {
@@ -260,6 +260,19 @@ function generateFunctionExpression(inst, states, last_state, original_map) {
             states.push(fstates.all[i]);
         };
     };
+
+    //generate parameters
+    for (var i = 0; i < inst.params.length; i++) {
+        var s_param_decl = new state.State('param_decl_' + inst.params[i], 'parameterDeclaration', {name:inst.params[i], id:i}, scope_map.clone());
+        s_param_decl.values=[];
+        if (i > 0) s_param_decl.parents.push(s_param_decl_par);
+        else var s_param_decl_first = s_param_decl;
+        var s_param_decl_par = s_param_decl;
+        states.push(s_param_decl);
+        fstates.all.push(s_param_decl);
+    };
+    if (s_param_decl) fstates.first.parents.push(s_param_decl);
+    if (s_param_decl_first) fstates.first = s_param_decl_first;
     s_fun_decl.states_body = fstates;
 
     return s_fun_decl;

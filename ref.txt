@@ -1,0 +1,11 @@
+références:
+
+http://flowtype.org/
+
+http://jsanalyse.codeplex.com/
+
+https://developers.google.com/closure/compiler/?csw=1
+
+http://www.brics.dk/TAJS/
+
+http://www.javascriptlint.com/

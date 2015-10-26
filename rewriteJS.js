@@ -118,6 +118,11 @@ function visitVariableInit(node, abst) {
             write.v = abst.instructions[abst.instructions.length - 1].r;
             write.jstype = 'Identifier';
             break;
+        case 'FunctionExpression':
+            visitFunctionExpression(node.init, abst);
+            write.v = abst.instructions[abst.instructions.length - 1].id;
+            write.jstype = 'Identifier';
+            break;
         default:
             break;
 
@@ -127,7 +132,7 @@ function visitVariableInit(node, abst) {
 
 
 function visitArgument(node, abst) {
-    var arg_v;
+    var arg_v = {};
     switch (node.type) {
         case 'Literal': //create a new variable for the argument
             //create a new variable for the argument
@@ -137,11 +142,13 @@ function visitArgument(node, abst) {
             tmp_var_id++;
             write.v = node.value;
             write.jstype = 'Literal';
-            arg_v = write.x;
+            arg_v.name = write.x;
+            arg_v.type = 'Literal';
             abst.instructions.push(write);
             break;
         case 'Identifier': //nothing to do
-            arg_v = node.name;
+            arg_v.name = node.name;
+            arg_v.type = 'Identifier';
             break;
         case 'BinaryExpression': //create a new variable for the argument
             //create a new variable for the argument
@@ -152,7 +159,8 @@ function visitArgument(node, abst) {
             visitBinaryExpression(node, abst);
             write.v = abst.instructions[abst.instructions.length - 1].r;
             write.jstype = 'Identifier';
-            arg_v = write.x;
+            arg_v.name = write.x;
+            arg_v.type = 'Identifier';
             abst.instructions.push(write);
             break;
         case 'UnaryExpression':
@@ -164,12 +172,14 @@ function visitArgument(node, abst) {
             visitUnaryExpression(node, abst);
             write.v = abst.instructions[abst.instructions.length - 1].r;
             write.jstype = 'Identifier';
-            arg_v = write.x;
+            arg_v.name = write.x;
+            arg_v.type = 'Identifier';
             abst.instructions.push(write);
             break;
         case 'FunctionExpression':
             visitFunctionExpression(node, abst);
-            arg_v = abst.instructions[abst.instructions.length - 1].id;
+            arg_v.name = abst.instructions[abst.instructions.length - 1].id;
+            arg_v.type = 'Identifier';
             break;
         default:
             break;

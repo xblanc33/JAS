@@ -50,7 +50,14 @@ function functionDeclaration() {
 function parameterDeclaration() {
     var old = this.getVariableValue(this.inst.name);
     this.joinParentsMap();
-    this.addVariableValueInLocalScope(this.inst.name, this.values);
+    var targetFunctions = [];
+    for (var i = 0; i < this.values.length; i++) {
+        var currentTarget = this.getVariableValue(this.values[i].name);
+        if ((typeof currentTarget !== "undefined") && (currentTarget.length)) {
+            targetFunctions = targetFunctions.concat(currentTarget);
+        };
+    };
+    this.addVariableValueInLocalScope(this.inst.name, targetFunctions);
     var ne = this.getVariableValue(this.inst.name);
     var changed = l.equality(old, ne);
     return !changed;

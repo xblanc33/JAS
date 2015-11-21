@@ -12,6 +12,12 @@ function attachLatticeFunctions(states, lattice) {
             case 'writeVariable':
                 states[i].f = lattice.writeVariable;
                 break;
+            case 'readProperty':
+                states[i].f = lattice.readProperty;
+                break;
+            case 'writeProperty':
+                states[i].f = lattice.writeProperty;
+                break;
             case 'operation':
                 states[i].f = lattice.operation;
                 break;

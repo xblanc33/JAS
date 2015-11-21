@@ -9,5 +9,5 @@ var ok = function(){ val=5;};
 var nok = function() {val=-5;};
 
 f( ok , nok , true);
-//f( ok , nok , false);
+f( ok , nok , false);
 

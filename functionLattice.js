@@ -38,6 +38,31 @@ function writeVariable() {
 };
 
 
+
+//x is the readen variable. v is the new created variable that contains the value of x
+function readProperty() {
+    var old = this.getVariableValue(this.inst.v);
+    this.joinParentsMap();
+    this.addVariableValueInLocalScope(this.inst.v, this.getParentsVariableValue(this.inst.x))
+    var ne = this.getVariableValue(this.inst.v);
+    return !l.equality(old, ne);
+};
+
+//x is the written variable, v is the value, jstype is the type of the value (Literal or Identifier)
+function writeProperty() {
+    var old = this.getVariableValue(this.inst.x);
+    this.joinParentsMap();
+    if (this.inst.jstype == 'Literal') {
+        this.updateVariableValue(this.inst.x, []);
+    } else { //'Identifier'
+        var v_id = this.getParentsVariableValue(this.inst.v);
+        this.updateVariableValue(this.inst.x, v_id);
+    };
+    var ne = this.getVariableValue(this.inst.x);
+    return !l.equality(old, ne);
+};
+
+
 function functionDeclaration() {
     var old = this.getVariableValue(this.inst.id);
     this.joinParentsMap();
@@ -104,6 +129,8 @@ module.exports.l = l;
 module.exports.variableDeclaration = variableDeclaration;
 module.exports.readVariable = readVariable;
 module.exports.writeVariable = writeVariable;
+module.exports.readProperty = readProperty;
+module.exports.writeProperty = writeProperty;
 module.exports.operation = defaultState;
 module.exports.ifstart = defaultState;
 module.exports.ifend = defaultState;

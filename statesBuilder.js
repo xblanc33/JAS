@@ -45,6 +45,10 @@ function generateInstructionState(inst, states, last_state, original_map) {
             return generateReadVariable(inst, states, last_state, original_map);
         case 'write-variable':
             return generateWriteVariable(inst, states, last_state, original_map);
+        case 'read-property':
+            return generateReadProperty(inst, states, last_state, original_map);
+        case 'write-property':
+            return generateWriteProperty(inst, states, last_state, original_map);
         case 'operation':
             return generateOperation(inst, states, last_state, original_map);
         case 'if':
@@ -78,6 +82,21 @@ function generateReadVariable(inst, states, last_state, original_map) {
 
 function generateWriteVariable(inst, states, last_state, original_map) {
     var ns = new state.State('write_' + inst.v + '_in_' + inst.x, 'writeVariable', inst, original_map.clone());
+    if (last_state) ns.parents.push(last_state);
+    states.push(ns);
+    return ns;
+};
+
+
+function generateReadProperty(inst, states, last_state, original_map) {
+    var ns = new state.State('read_property' + inst.property + '_of_' + inst.object +'_into_' + inst.v, 'readVariable', inst, original_map.clone());
+    if (last_state) ns.parents.push(last_state);
+    states.push(ns);
+    return ns;
+};
+
+function generateWriteProperty(inst, states, last_state, original_map) {
+    var ns = new state.State('write_property' + inst.property + '_of_' + inst.object + '__with_'+inst.v, 'writeProperty', inst, original_map.clone());
     if (last_state) ns.parents.push(last_state);
     states.push(ns);
     return ns;
@@ -229,8 +248,11 @@ function generateFunctionDeclaration(inst, states, last_state, original_map) {
 
     //generate parameters
     for (var i = 0; i < inst.params.length; i++) {
-        var s_param_decl = new state.State('param_decl_' + inst.params[i], 'parameterDeclaration', {name:inst.params[i], id:i}, scope_map.clone());
-        s_param_decl.values=[];
+        var s_param_decl = new state.State('param_decl_' + inst.params[i], 'parameterDeclaration', {
+            name: inst.params[i],
+            id: i
+        }, scope_map.clone());
+        s_param_decl.values = [];
         if (i > 0) s_param_decl.parents.push(s_param_decl_par);
         else var s_param_decl_first = s_param_decl;
         var s_param_decl_par = s_param_decl;
@@ -263,8 +285,11 @@ function generateFunctionExpression(inst, states, last_state, original_map) {
 
     //generate parameters
     for (var i = 0; i < inst.params.length; i++) {
-        var s_param_decl = new state.State('param_decl_' + inst.params[i], 'parameterDeclaration', {name:inst.params[i], id:i}, scope_map.clone());
-        s_param_decl.values=[];
+        var s_param_decl = new state.State('param_decl_' + inst.params[i], 'parameterDeclaration', {
+            name: inst.params[i],
+            id: i
+        }, scope_map.clone());
+        s_param_decl.values = [];
         if (i > 0) s_param_decl.parents.push(s_param_decl_par);
         else var s_param_decl_first = s_param_decl;
         var s_param_decl_par = s_param_decl;

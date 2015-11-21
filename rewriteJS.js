@@ -123,6 +123,10 @@ function visitVariableInit(node, abst) {
             write.v = abst.instructions[abst.instructions.length - 1].id;
             write.jstype = 'Identifier';
             break;
+        case 'MemberExpression':
+            visitMemberExpression(node.init, abst);
+            write.v = abst.instructions[abst.instructions.length - 1].v;
+            write.jstype = 'Property';
         default:
             break;
 
@@ -181,11 +185,31 @@ function visitArgument(node, abst) {
             arg_v.name = abst.instructions[abst.instructions.length - 1].id;
             arg_v.type = 'Identifier';
             break;
+        case 'MemberExpression':
+            visitMemberExpression(node.init, abst);
+            arg_v.name = abst.instructions[abst.instructions.length - 1].v;
+            arg_v.type = 'Property';
+            break;
         default:
             break;
 
     };
     return arg_v;
+};
+
+function visitMemberExpression(node, abst) {
+    var me = {};
+    me.type = 'read-property';
+    if (node.object.type === 'Identifier') {
+        me.object = node.object.name;
+    } else {
+        visitMemberExpression(node.object, abst);
+        me.object = abst.instructions[abst.instructions.length - 1].v;
+    }
+    me.property = node.property.name;
+    me.v = '__p_' + tmp_var_id;
+    tmp_var_id++;
+    abst.instructions.push(me);
 };
 
 
@@ -221,6 +245,10 @@ function visitBinaryExpression(node, abst) {
             op.x = abst.instructions[abst.instructions.length - 1].r;
             op.xjstype = 'Identifier';
             break;
+        case 'MemberExpression':
+            visitMemberExpression(node.left, abst);
+            op.x = abst.instructions[abst.instructions.length - 1].v;
+            op.xjstype = 'Property';
         default:
             break;
     };
@@ -250,6 +278,10 @@ function visitBinaryExpression(node, abst) {
             op.y = abst.instructions[abst.instructions.length - 1].r;
             op.yjstype = 'Identifier';
             break;
+        case 'MemberExpression':
+            visitMemberExpression(node.right, abst);
+            op.y = abst.instructions[abst.instructions.length - 1].v;
+            op.yjstype = 'Property';
         default:
             break;
     };
@@ -291,7 +323,10 @@ function visitUnaryExpression(node, abst) {
             op.x = abst.instructions[abst.instructions.length - 1].r;
             op.xjstype = 'Identifier';
             break;
-
+        case 'MemberExpression':
+            visitMemberExpression(node.argument, abst);
+            op.x = abst.instructions[abst.instructions.length - 1].v;
+            op.xjstype = 'Property';
         default:
             break;
     };
@@ -308,8 +343,20 @@ function visitExpressionStatement(node, abst) {
     switch (node.expression.type) {
         case 'AssignmentExpression':
             var write = {};
-            write.type = 'write-variable';
-            write.x = node.expression.left.name;
+
+            switch (node.expression.left.type) {
+                case 'Identifier':
+                    write.type = 'write-variable';
+                    write.x = node.expression.left.name;
+                    break;
+                case 'MemberExpression':
+                    write.type = 'write-property';
+                    visitMemberExpression(node.expression.left, abst);
+                    write.property = abst.instructions[abst.instructions.length - 1].v;
+                    write.object = abst.instructions[abst.instructions.length - 1].property;
+                    break;
+
+            };
 
             switch (node.expression.right.type) {
                 case 'Literal':
@@ -341,6 +388,11 @@ function visitExpressionStatement(node, abst) {
                     write.v = abst.instructions[abst.instructions.length - 1].id;
                     write.jstype = 'Identifier';
                     break;
+                case 'MemberExpression':
+                    visitMemberExpression(node.expression.right, abst);
+                    write.v = abst.instructions[abst.instructions.length - 1].v;
+                    write.jstype = 'Property';
+                    break;
                 default:
                     break;
 
@@ -358,6 +410,10 @@ function visitExpressionStatement(node, abst) {
                     visitFunctionExpression(node.expression.callee, abst);
                     call.callee = abst.instructions[abst.instructions.length - 1].id;
                     break;
+                case 'MemberExpression':
+                    visitMemberExpression(node.expression.callee, abst);
+                    call.callee = abst.instructions[abst.instructions.length - 1].v;
+                    break;    
             };
             if (node.expression.arguments) {
                 call.args = [];

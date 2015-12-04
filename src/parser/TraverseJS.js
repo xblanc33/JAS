@@ -172,7 +172,6 @@ module.exports.enterUpdateExpression = function(node, parent) {
     createAbst(node);
     node.res = '__v_' + id;
     id++;
-    return abst;
 };
 
 module.exports.leaveUpdateExpression = function(node, parent) {

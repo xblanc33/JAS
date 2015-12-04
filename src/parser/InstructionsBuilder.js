@@ -44,29 +44,29 @@ module.exports.build = function(data) {
                 traverseJS.enterUpdateExpression(node, parent);
                 break;
             case 'MemberExpression':
-            	traverseJS.enterMemberExpression(node,parent,abst);
-            	break;
+                traverseJS.enterMemberExpression(node, parent, abst);
+                break;
             case 'ExpressionStatement':
-            	traverseJS.enterExpressionStatement(node, parent);
-            	break;
+                traverseJS.enterExpressionStatement(node, parent);
+                break;
             case 'AssignmentExpression':
-            	traverseJS.enterAssignmentExpression(node, parent);
-            	break;
+                traverseJS.enterAssignmentExpression(node, parent);
+                break;
             case 'CallExpression':
-           		traverseJS.enterCallExpression(node, parent);
-           		break;
-           	case 'FunctionExpression':
-           		traverseJS.enterFunctionExpression(node, parent);
-           		break;
-           	case 'FunctionDeclaration':
-           		traverseJS.enterFunctionDeclaration(node, parent);
-           		break;
-           	case 'BlockStatement':
-           		traverseJS.enterBlockStatement(node, parent);
-           		break;
-           	case 'IfStatement':
-           		traverseJS.enterIfStatement(node, parent);
-           		break;
+                traverseJS.enterCallExpression(node, parent);
+                break;
+            case 'FunctionExpression':
+                traverseJS.enterFunctionExpression(node, parent);
+                break;
+            case 'FunctionDeclaration':
+                traverseJS.enterFunctionDeclaration(node, parent);
+                break;
+            case 'BlockStatement':
+                traverseJS.enterBlockStatement(node, parent);
+                break;
+            case 'IfStatement':
+                traverseJS.enterIfStatement(node, parent);
+                break;
         };
     };
 
@@ -91,29 +91,29 @@ module.exports.build = function(data) {
                 traverseJS.leaveUpdateExpression(node, parent);
                 break;
             case 'MemberExpression':
-            	traverseJS.leaveMemberExpression(node,parent,abst);
-            	break;
+                traverseJS.leaveMemberExpression(node, parent, abst);
+                break;
             case 'ExpressionStatement':
-            	traverseJS.leaveExpressionStatement(node, parent);
-            	break;
+                traverseJS.leaveExpressionStatement(node, parent);
+                break;
             case 'AssignmentExpression':
-            	traverseJS.leaveAssignmentExpression(node, parent);
-            	break;
-           	case 'CallExpression':
-           		traverseJS.leaveCallExpression(node, parent);
-           		break;
-           	case 'FunctionExpression':
-           		traverseJS.leaveFunctionExpression(node, parent);
-           		break;
-           	case 'FunctionDeclaration':
-           		traverseJS.leaveFunctionDeclaration(node, parent);
-           		break;
-           	case 'BlockStatement':
-           		traverseJS.leaveBlockStatement(node, parent);
-           		break;
-           	case 'IfStatement':
-           		traverseJS.leaveIfStatement(node, parent);
-           		break;
+                traverseJS.leaveAssignmentExpression(node, parent);
+                break;
+            case 'CallExpression':
+                traverseJS.leaveCallExpression(node, parent);
+                break;
+            case 'FunctionExpression':
+                traverseJS.leaveFunctionExpression(node, parent);
+                break;
+            case 'FunctionDeclaration':
+                traverseJS.leaveFunctionDeclaration(node, parent);
+                break;
+            case 'BlockStatement':
+                traverseJS.leaveBlockStatement(node, parent);
+                break;
+            case 'IfStatement':
+                traverseJS.leaveIfStatement(node, parent);
+                break;
         };
     };
 
